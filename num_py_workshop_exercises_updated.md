@@ -14,19 +14,18 @@ This workshop provides a comprehensive introduction to NumPy, the fundamental pa
 
 ## Workshop Schedule
 
-| Time | Topic | Duration |
+| Time | Topic | Duration   |
 |------|-------|----------|
-| 09:00 – 09:15 | Setup & Introductions | 15 min |
-| 09:15 – 09:45 | Why NumPy? | 30 min |
-| 09:45 – 10:30 | Array Creation & Inspection | 45 min |
+| 09:00 – 09:15 | Welcome and icebreaker | 15 min |
+| 09:15 – 09:45 | Why Numpy? | 30 min |
+| 09:45 – 10:30 | Creating ndarrays | 45 min |
 | 10:30 – 10:45 | *Break* | 15 min |
-| 10:45 – 11:30 | Indexing, Slicing & Views | 45 min |
-| 11:30 – 12:15 | Vectorized Operations & ufuncs | 45 min |
-| 12:15 – 13:15 | *Lunch Break* | 60 min |
-| 13:15 - 14:45 | Universal Functions and Aggregations | 90 min |
+| 10:45 – 12:15 | Indexing, slicing and views | 90 min |
+| 12:15 – 13:15 | *Lunch break* | 60 min |
+| 13:15 - 14:45 | Universal functions and aggregations | 90 min |
 | 14:45 - 15:00 | *Break* | 15 min |
-| 15:00 - 16:00 | Advanced Indexing and Reshaping | 60 min |
-| 16:00 - 16:50 | Performance Tuning and Mini‑Project | 50 min |
+| 15:00 - 16:00 | Advanced indexing and reshaping | 60 min |
+| 16:00 - 16:50 | Performance tuning and mini‑project | 50 min |
 | 16:50 - 17:00 | Wrap-up | 10 min |
 
 ## How to Use This Document
@@ -51,7 +50,7 @@ Each section contains:
 
 
 
-## 0. Setup & Introductions (09:00–09:15)
+## 0. Welcome and icebreaker (09:00–09:15)
 
 ### Questions
 - Is my Python environment properly configured for NumPy?
@@ -91,7 +90,7 @@ Participants should see their local versions, confirming a valid environment.
 
 ---
 
-## 1. Why NumPy? (09:15–09:45)
+## 1. Why Numpy? (09:15–09:45)
 
 ### Questions
 - Why should I use NumPy instead of Python lists?
@@ -260,7 +259,7 @@ print(f"NumPy is {py_sqrt_time/np_sqrt_time:.1f}x faster")
 
 ---
 
-## 2. Array Creation & Inspection (09:45–10:30)
+## 2. Creating ndarrays (09:45–10:30)
 
 ### Questions
 - How do I create NumPy arrays with different initialization patterns?
@@ -464,7 +463,7 @@ print(f"Savings: {(1 - large_int8.nbytes/large_int64.nbytes)*100:.1f}%")
 - Array properties: `.shape`, `.dtype`, `.ndim`, `.size`, `.nbytes`, `.itemsize`
 - Choose appropriate data types to minimize memory usage
 
-## 3. Indexing, Slicing & Views (10:45–11:30)
+## 3. Indexing, slicing and views (10:45–12:15)
 
 ### Questions
 - How do I access and modify specific elements or sections of arrays?
@@ -623,16 +622,19 @@ print(f"Anti-diagonal: {anti_diag}")  # [3, 6, 9, 12]
 
 ---
 
-## 4. Vectorized Operations & ufuncs (11:30–12:15)
+## 4. Universal functions and aggregations (13:15–14:45)
 
 ### Questions
 - What are universal functions (ufuncs) and how do they work?
+- What is broadcasting and how does it enable operations between arrays of different shapes?
 - How do vectorized operations compare to traditional loops in performance?
 - How can I apply functions element-wise across arrays efficiently?
 
 ### Objectives
 After completing this episode, learners will be able to:
 - Use NumPy's universal functions for element-wise operations
+- Understand NumPy's broadcasting rules and when they apply
+- Use broadcasting for efficient array operations without creating intermediate copies
 - Compare vectorized operations with explicit loops for performance
 - Apply aggregation functions and conditional operations on arrays
 - Understand when and how to use vectorized computations
@@ -871,28 +873,15 @@ cross_product = np.cross(u, v)
 print(f"Cross product: {cross_product}")  # [-3  6 -3]
 ```  
 
-### Key Points
+### Key Points - Universal Functions
 - Universal functions (ufuncs) operate element-wise on arrays and are highly optimized
 - Vectorized operations are typically 10-100x faster than explicit Python loops
 - NumPy provides comprehensive mathematical, trigonometric, and logical functions
-- Aggregation functions like `sum()`, `mean()`, `max()` can operate on entire arrays or along specific axes
 - Use `np.where()` for conditional operations and element-wise logic
 
 ---
 
-## 5. Broadcasting (13:15–14:00)
-
-### Questions
-- What is broadcasting and how does it enable operations between arrays of different shapes?
-- When can two arrays be broadcast together?
-- How can I use broadcasting to avoid explicit loops and memory-intensive operations?
-
-### Objectives
-After completing this episode, learners will be able to:
-- Understand NumPy's broadcasting rules and when they apply
-- Use broadcasting for efficient array operations without creating intermediate copies
-- Apply broadcasting to real-world problems like normalization and distance calculations
-- Predict when broadcasting will work and when it will fail
+### Broadcasting
 
 **Hands‑On Code**  
 ```python
@@ -1021,22 +1010,8 @@ z = np.sin(x) ** 10 + np.cos(10 + y * x) * np.cos(x)
 print(f"Result shape: {z.shape}")  # (50, 50)
 print("This creates a 2D function over the entire x-y grid!")
 
-# Image operations example
-print(f"\n3. Image processing simulation")
-# Simulate RGB image: (height, width, channels)
-image = np.random.randint(0, 256, (100, 150, 3), dtype=np.uint8)
-channel_weights = np.array([0.8, 1.0, 1.2])  # Adjust R, G, B channels
-
-print(f"Image shape: {image.shape}")
-print(f"Channel weights shape: {channel_weights.shape}")
-print(f"Broadcasting: {image.shape} * {channel_weights.shape} → {image.shape}")
-
-# This broadcasts the channel weights across all pixels
-adjusted = image * channel_weights
-print(f"Adjusted image shape: {adjusted.shape}")
-
 # Distance calculations
-print(f"\n4. Efficient distance calculations")
+print(f"\n3. Efficient distance calculations")
 points = np.random.random((5, 2))  # 5 points in 2D
 center = np.array([0.5, 0.5])
 
@@ -1050,13 +1025,12 @@ pairwise_dist = np.sqrt(np.sum(diff**2, axis=2))
 print(f"Pairwise distance matrix shape: {pairwise_dist.shape}")
 ```
 
-**Exercise**  
+**Exercise - Broadcasting**  
 1. Given `X = np.ones((4,3,2))` and `v = np.array([1,2])`, broadcast `v` to add to the last axis of `X`.
 2. Create a 5x5 matrix where each element (i,j) equals the sum i+j using broadcasting.
 3. Normalize a 2D array so each column has mean 0 and standard deviation 1.
-4. Create a function that computes the Euclidean distance between all pairs of points in a set.
 
-**Answer**  
+**Answer - Broadcasting**  
 ```python
 # 1. Broadcasting to last axis
 X = np.ones((4,3,2))
@@ -1065,69 +1039,87 @@ result = X + v  # v broadcasts to last dimension automatically
 print(f"X.shape: {X.shape}")
 print(f"v.shape: {v.shape}")
 print(f"Result shape: {result.shape}")  # (4,3,2)
-print(f"First slice of result:\n{result[0]}")  # [[2,3],[2,3],[2,3]]
 
 # 2. Matrix where element (i,j) = i+j
 i_indices = np.arange(5)[:, np.newaxis]  # Shape: (5, 1)
 j_indices = np.arange(5)  # Shape: (5,)
 sum_matrix = i_indices + j_indices
-print(f"\nSum matrix (i+j):\n{sum_matrix}")
-
-# Alternative method:
-i_vals, j_vals = np.meshgrid(np.arange(5), np.arange(5), indexing='ij')
-sum_matrix_alt = i_vals + j_vals
-print(f"Alternative method:\n{sum_matrix_alt}")
+print(f"Sum matrix (i+j):\n{sum_matrix}")
 
 # 3. Column-wise normalization
 data = np.random.randn(6, 4)  # 6 rows, 4 columns
-print(f"\nOriginal data shape: {data.shape}")
-print(f"Original column means: {data.mean(axis=0)}")
-print(f"Original column stds: {data.std(axis=0)}")
-
-# Normalize each column
 col_means = data.mean(axis=0, keepdims=True)  # Shape: (1, 4)
 col_stds = data.std(axis=0, keepdims=True)    # Shape: (1, 4)
 normalized = (data - col_means) / col_stds
-
 print(f"Normalized column means: {normalized.mean(axis=0)}")
-print(f"Normalized column stds: {normalized.std(axis=0)}")
-
-# 4. Pairwise Euclidean distances
-def pairwise_distances(points):
-    """
-    Compute Euclidean distances between all pairs of points.
-    
-    Parameters:
-    points: array of shape (n_points, n_dimensions)
-    
-    Returns:
-    distances: array of shape (n_points, n_points)
-    """
-    # Broadcasting approach
-    diff = points[:, np.newaxis, :] - points[np.newaxis, :, :]
-    distances = np.sqrt(np.sum(diff**2, axis=2))
-    return distances
-
-# Test the function
-test_points = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
-distances = pairwise_distances(test_points)
-print(f"\nTest points:\n{test_points}")
-print(f"Pairwise distances:\n{distances}")
-
-# Verify: distance from (0,0) to (1,1) should be sqrt(2) ≈ 1.414
-print(f"Distance from (0,0) to (1,1): {distances[0, 3]:.3f}")
 ```  
 
-### Key Points
+### Key Points - Broadcasting
 - Broadcasting allows operations between arrays of different shapes without explicit loops
 - Arrays are compatible for broadcasting when their trailing dimensions are equal or one of them is 1
 - Broadcasting is memory-efficient as it doesn't create intermediate copies
 - Use `keepdims=True` in reduction operations to maintain dimensions for broadcasting
-- Broadcasting enables elegant solutions for normalization, distance calculations, and image processing
 
 ---
 
-## 6. Advanced Indexing & Reshaping (14:00–14:45)
+### Aggregations
+
+**Hands‑On Code**  
+```python
+import numpy as np
+
+# Comprehensive Aggregation Functions (inspired by VanderPlas Ch 2.04)
+print(f"=== Aggregation Functions ===")
+
+# Performance comparison: Python vs NumPy
+big_array = np.random.random(1000000)
+print(f"Performance comparison on 1M elements:")
+
+# Time comparison (conceptual - actual timing would vary)
+# Python sum: ~100ms, NumPy sum: ~500μs (200x faster)
+print(f"Sum result: {np.sum(big_array):.4f}")
+print(f"NumPy sum is ~200x faster than Python's built-in sum()")
+
+# Comprehensive aggregation table (following VanderPlas Table 2-3)
+data = np.random.randn(1000)
+print(f"\nComprehensive aggregations on random data (n=1000):")
+print(f"{'Function':<20} {'Result':<15} {'NaN-safe version'}")
+print("-" * 55)
+print(f"{'np.sum':<20} {np.sum(data):<15.4f} {'np.nansum'}")
+print(f"{'np.mean':<20} {np.mean(data):<15.4f} {'np.nanmean'}")
+print(f"{'np.std':<20} {np.std(data):<15.4f} {'np.nanstd'}")
+print(f"{'np.min':<20} {np.min(data):<15.4f} {'np.nanmin'}")
+print(f"{'np.max':<20} {np.max(data):<15.4f} {'np.nanmax'}")
+print(f"{'np.median':<20} {np.median(data):<15.4f} {'np.nanmedian'}")
+
+# Multi-dimensional aggregations with axis examples
+print(f"\n=== Multi-dimensional Aggregations ===")
+matrix = np.random.random((3, 4))
+print(f"Matrix (3x4):\n{matrix}")
+
+print(f"\nAggregations along different axes:")
+print(f"Overall sum: {matrix.sum():.4f}")
+print(f"Sum of each column (axis=0): {matrix.sum(axis=0)}")  # Shape: (4,)
+print(f"Sum of each row (axis=1): {matrix.sum(axis=1)}")     # Shape: (3,)
+
+# Boolean aggregations
+heights = np.array([170, 175, 180, 185, 190])
+tall_threshold = 180
+print(f"\nBoolean aggregations:")
+print(f"Heights: {heights}")
+print(f"Number > {tall_threshold}cm: {np.sum(heights > tall_threshold)}")
+print(f"Percentage > {tall_threshold}cm: {100 * np.mean(heights > tall_threshold):.1f}%")
+```
+
+### Key Points - Aggregations
+- Aggregation functions like `sum()`, `mean()`, `max()` can operate on entire arrays or along specific axes
+- Use `axis` parameter to control which dimension is aggregated
+- NaN-safe versions (e.g., `np.nanmean`) handle missing data appropriately
+- Boolean aggregations enable counting and percentage calculations
+
+---
+
+## 5. Advanced indexing and reshaping (15:00–16:00)
 
 ### Questions
 - How can I use advanced indexing techniques for complex data manipulation?
@@ -1138,6 +1130,58 @@ print(f"Distance from (0,0) to (1,1): {distances[0, 3]:.3f}")
 After completing this episode, learners will be able to:
 - Use advanced indexing techniques including fancy and boolean indexing
 - Reshape arrays while understanding memory layout implications
+- Combine and split arrays using concatenation and stacking
+- Apply advanced indexing to real-world data manipulation problems
+
+**Hands‑On Code**  
+```python
+import numpy as np
+
+# Boolean indexing
+print("=== Boolean Indexing ===")
+data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+mask = data > 5
+print(f"Data: {data}")
+print(f"Mask (data > 5): {mask}")
+print(f"Values > 5: {data[mask]}")
+
+# Fancy indexing
+print(f"\n=== Fancy Indexing ===")
+indices = [1, 3, 7]
+print(f"Elements at indices {indices}: {data[indices]}")
+
+# 2D boolean indexing
+matrix = np.random.randint(0, 10, (4, 4))
+print(f"\nMatrix:\n{matrix}")
+print(f"Values > 5:\n{matrix[matrix > 5]}")
+
+# Array reshaping
+print(f"\n=== Reshaping Arrays ===")
+arr = np.arange(12)
+print(f"Original: {arr}")
+print(f"Reshaped (3,4):\n{arr.reshape(3, 4)}")
+print(f"Reshaped (2,6):\n{arr.reshape(2, 6)}")
+
+# Array concatenation
+print(f"\n=== Array Concatenation ===")
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+print(f"Concatenate: {np.concatenate([a, b])}")
+
+# 2D concatenation
+matrix1 = np.ones((2, 3))
+matrix2 = np.zeros((2, 3))
+print(f"Vertical stack:\n{np.vstack([matrix1, matrix2])}")
+print(f"Horizontal stack:\n{np.hstack([matrix1, matrix2])}")
+```
+
+### Key Points - Advanced Indexing
+- Boolean indexing provides powerful filtering capabilities
+- Fancy indexing allows selection of arbitrary array elements
+- Reshaping changes array dimensions while preserving data
+- Use concatenation and stacking to combine arrays
+
+---
 - Stack and split arrays using various NumPy functions
 - Manipulate array dimensions for different data processing needs
 
@@ -1631,335 +1675,49 @@ print(f"Alternative shapes: {alt_3d_1.shape}, {alt_3d_2.shape}")
 
 ---
 
-## 7. Memory Layout & Performance (15:00–15:30)
+## 6. Performance tuning and mini‑project (16:00–16:50)
 
 ### Questions
-- How does memory layout affect NumPy array performance?
-- What's the difference between C-style and Fortran-style array ordering?
-- How can I optimize array operations for better performance?
+- How can I optimize NumPy code for better performance?
+- What memory layout considerations affect array operations?
+- How do I apply NumPy skills to solve real-world problems?
 
 ### Objectives
 After completing this episode, learners will be able to:
+- Apply performance optimization techniques for NumPy operations
 - Understand memory layout and its impact on performance
-- Compare different array orders (C vs Fortran) and their use cases
-- Apply performance optimization techniques for array operations
-- Use memory-efficient practices in array computations
+- Complete a mini-project using NumPy skills learned throughout the workshop
 
 **Hands‑On Code**  
 ```python
 import numpy as np
-import timeit
-
-# Memory layout demonstration
-print("=== Memory Layout and Performance ===")
-
-# Create arrays with different memory layouts
-y_c = np.arange(10000).reshape(100, 100)  # C-order (row-major)
-y_f = np.asfortranarray(y_c)              # Fortran-order (column-major)
-
-print(f"C-order array:")
-print(f"  C-contiguous: {y_c.flags['C_CONTIGUOUS']}")
-print(f"  F-contiguous: {y_c.flags['F_CONTIGUOUS']}")
-print(f"  Strides: {y_c.strides}")
-
-print(f"\nFortran-order array:")
-print(f"  C-contiguous: {y_f.flags['C_CONTIGUOUS']}")
-print(f"  F-contiguous: {y_f.flags['F_CONTIGUOUS']}")
-print(f"  Strides: {y_f.strides}")
-
-# Performance comparison for different operations
-print(f"\n=== Performance Comparison ===")
-
-# Row-wise operations (favor C-order)
-c_row_time = timeit.timeit(lambda: y_c.sum(axis=1), number=1000)
-f_row_time = timeit.timeit(lambda: y_f.sum(axis=1), number=1000)
-print(f"Row-wise sum (axis=1):")
-print(f"  C-order: {c_row_time:.6f}s")
-print(f"  F-order: {f_row_time:.6f}s")
-print(f"  C-order is {f_row_time/c_row_time:.1f}x faster")
-
-# Column-wise operations (favor F-order)
-c_col_time = timeit.timeit(lambda: y_c.sum(axis=0), number=1000)
-f_col_time = timeit.timeit(lambda: y_f.sum(axis=0), number=1000)
-print(f"\nColumn-wise sum (axis=0):")
-print(f"  C-order: {c_col_time:.6f}s")
-print(f"  F-order: {f_col_time:.6f}s")
-print(f"  F-order is {c_col_time/f_col_time:.1f}x faster")
-
-# Memory access patterns
-print(f"\n=== Memory Access Patterns ===")
-
-# Demonstrate cache-friendly vs cache-unfriendly access
-large_array = np.random.randn(1000, 1000)
-
-def row_wise_access(arr):
-    """Access elements row by row (cache-friendly)"""
-    total = 0
-    for i in range(arr.shape[0]):
-        for j in range(arr.shape[1]):
-            total += arr[i, j]
-    return total
-
-def col_wise_access(arr):
-    """Access elements column by column (cache-unfriendly for C-order)"""
-    total = 0
-    for j in range(arr.shape[1]):
-        for i in range(arr.shape[0]):
-            total += arr[i, j]
-    return total
-
-# Time both access patterns (using smaller array for demo)
-small_array = np.random.randn(200, 200)
-row_time = timeit.timeit(lambda: row_wise_access(small_array), number=10)
-col_time = timeit.timeit(lambda: col_wise_access(small_array), number=10)
-
-print(f"Row-wise access: {row_time:.4f}s")
-print(f"Column-wise access: {col_time:.4f}s")
-print(f"Row-wise is {col_time/row_time:.1f}x faster")
-
-# Memory usage and data types
-print(f"\n=== Memory Usage ===")
-data_types = [np.int8, np.int16, np.int32, np.int64, 
-              np.float16, np.float32, np.float64, 
-              np.complex64, np.complex128]
-
-size = (100, 100)
-for dtype in data_types:
-    arr = np.zeros(size, dtype=dtype)
-    print(f"{dtype.__name__:>12}: {arr.nbytes:>8} bytes ({arr.itemsize} per element)")
-
-# Views vs copies performance
-print(f"\n=== Views vs Copies ===")
-original = np.random.randn(1000, 1000)
-
-# Creating a view (fast)
-view_time = timeit.timeit(lambda: original[::2, ::2], number=10000)
-
-# Creating a copy (slower)
-copy_time = timeit.timeit(lambda: original[::2, ::2].copy(), number=10000)
-
-print(f"Creating view: {view_time:.6f}s")
-print(f"Creating copy: {copy_time:.6f}s")
-print(f"View creation is {copy_time/view_time:.1f}x faster")
-
-# Memory sharing
-view = original[::2, ::2]
-copy = original[::2, ::2].copy()
-
-print(f"\nMemory sharing:")
-print(f"Original and view share memory: {np.shares_memory(original, view)}")
-print(f"Original and copy share memory: {np.shares_memory(original, copy)}")
-
-# Modifying arrays
-print(f"\n=== Array Modification Effects ===")
-test_array = np.arange(12).reshape(3, 4)
-test_view = test_array[1:3, 1:3]
-test_copy = test_array[1:3, 1:3].copy()
-
-print(f"Original array:\n{test_array}")
-print(f"View:\n{test_view}")
-print(f"Copy:\n{test_copy}")
-
-# Modify view
-test_view[0, 0] = 999
-print(f"\nAfter modifying view:")
-print(f"Original array:\n{test_array}")  # Changed!
-print(f"View:\n{test_view}")
-print(f"Copy:\n{test_copy}")  # Unchanged
-
-# Modify copy
-test_copy[0, 0] = 777
-print(f"\nAfter modifying copy:")
-print(f"Original array:\n{test_array}")  # Unchanged
-print(f"View:\n{test_view}")
-print(f"Copy:\n{test_copy}")  # Changed
-
-# Performance tips demonstration
-print(f"\n=== Performance Tips ===")
-
-# Tip 1: Use in-place operations when possible
-large_data = np.random.randn(100000)
-
-def not_in_place(arr):
-    return arr * 2 + 1
-
-def in_place(arr):
-    arr *= 2
-    arr += 1
-    return arr
-
-# Time comparison (use copies to be fair)
-not_in_place_time = timeit.timeit(lambda: not_in_place(large_data.copy()), number=100)
-in_place_time = timeit.timeit(lambda: in_place(large_data.copy()), number=100)
-
-print(f"Not in-place: {not_in_place_time:.4f}s")
-print(f"In-place: {in_place_time:.4f}s")
-print(f"In-place is {not_in_place_time/in_place_time:.1f}x faster")
-
-# Tip 2: Pre-allocate arrays when possible
-def append_method():
-    result = np.array([])
-    for i in range(1000):
-        result = np.append(result, i)
-    return result
-
-def preallocate_method():
-    result = np.empty(1000)
-    for i in range(1000):
-        result[i] = i
-    return result
-
-append_time = timeit.timeit(append_method, number=10)
-prealloc_time = timeit.timeit(preallocate_method, number=10)
-
-print(f"\nArray building:")
-print(f"Append method: {append_time:.4f}s")
-print(f"Pre-allocate method: {prealloc_time:.4f}s")
-print(f"Pre-allocation is {append_time/prealloc_time:.1f}x faster")
-```
-
-**Exercise**  
-1. Create a 200×50 array in Fortran order, then verify its flags.
-2. Compare the performance of row-wise vs column-wise operations on C-order and F-order arrays.
-3. Demonstrate the difference between creating a view and a copy of an array slice.
-
-**Answer**  
-```python
-# 1. Fortran order array
-z = np.asfortranarray(np.zeros((200, 50)))
-print("Array flags:")
-print(f"F_CONTIGUOUS: {z.flags['F_CONTIGUOUS']}")  # True
-print(f"C_CONTIGUOUS: {z.flags['C_CONTIGUOUS']}")  # False
-print(f"Strides: {z.strides}")
-
-# 2. Performance comparison
-import timeit
-
-# Create test arrays
-c_array = np.random.randn(500, 500)  # C-order
-f_array = np.asfortranarray(c_array)  # F-order
-
-print(f"\nPerformance comparison:")
-
-# Row-wise operations
-c_row = timeit.timeit(lambda: c_array.sum(axis=1), number=100)
-f_row = timeit.timeit(lambda: f_array.sum(axis=1), number=100)
-print(f"Row-wise sum:")
-print(f"  C-order: {c_row:.6f}s")
-print(f"  F-order: {f_row:.6f}s")
-print(f"  C-order is {f_row/c_row:.1f}x faster")
-
-# Column-wise operations
-c_col = timeit.timeit(lambda: c_array.sum(axis=0), number=100)
-f_col = timeit.timeit(lambda: f_array.sum(axis=0), number=100)
-print(f"Column-wise sum:")
-print(f"  C-order: {c_col:.6f}s")
-print(f"  F-order: {f_col:.6f}s")
-print(f"  F-order is {c_col/f_col:.1f}x faster")
-
-# 3. View vs copy demonstration
-original = np.arange(12).reshape(3, 4)
-print(f"\nOriginal array:\n{original}")
-
-# Create view and copy
-array_view = original[1:3, 1:4]  # This is a view
-array_copy = original[1:3, 1:4].copy()  # This is a copy
-
-print(f"View:\n{array_view}")
-print(f"Copy:\n{array_copy}")
-
-# Check memory sharing
-print(f"\nMemory sharing:")
-print(f"View shares memory: {np.shares_memory(original, array_view)}")
-print(f"Copy shares memory: {np.shares_memory(original, array_copy)}")
-
-# Modify the view
-array_view[0, 0] = 999
-print(f"\nAfter modifying view:")
-print(f"Original array:\n{original}")  # Changed at position (1,1)
-print(f"View:\n{array_view}")
-
-# Modify the copy
-array_copy[0, 0] = 777
-print(f"\nAfter modifying copy:")
-print(f"Original array:\n{original}")  # Unchanged
-print(f"Copy:\n{array_copy}")
 
 # Performance comparison
-view_time = timeit.timeit(lambda: original[1:3, 1:4], number=100000)
-copy_time = timeit.timeit(lambda: original[1:3, 1:4].copy(), number=100000)
-print(f"\nPerformance:")
-print(f"View creation: {view_time:.6f}s")
-print(f"Copy creation: {copy_time:.6f}s")
-print(f"View is {copy_time/view_time:.1f}x faster to create")
-```  
+print("=== Performance Optimization ===")
 
-### Key Points
-- Memory layout (C-order vs Fortran-order) significantly affects performance for different operations
-- C-order arrays are faster for row-wise operations, F-order for column-wise operations
-- Views share memory with original arrays and are much faster to create than copies
-- Use `np.shares_memory()` to check if arrays share memory
-- Consider memory layout when designing performance-critical algorithms
+# Memory layout considerations
+print("Memory layout examples...")
+arr_c = np.array([[1, 2, 3], [4, 5, 6]], order='C')  # C-style (row-major)
+arr_f = np.array([[1, 2, 3], [4, 5, 6]], order='F')  # Fortran-style (column-major)
+
+print(f"C-style flags: {arr_c.flags}")
+print(f"F-style flags: {arr_f.flags}")
+
+# Mini-project: Data analysis pipeline
+print(f"\n=== Mini-Project: Weather Data Analysis ===")
+# This would reference the weather notebook exercise
+print("Apply your NumPy skills to analyze weather data!")
+```
+
+### Key Points - Performance
+- Memory layout (C vs Fortran order) affects performance
+- Vectorized operations are much faster than Python loops
+- Use views instead of copies when possible
+- Apply NumPy skills to real-world data analysis problems
 
 ---
 
-## 9. Mini‑Project (15:30–16:30)
-
-### Questions
-- How can I apply NumPy techniques to solve a real-world data problem?
-- What strategies help optimize performance and code clarity?
-
-### Objectives
-- Use NumPy for a practical data analysis or simulation task
-- Apply vectorization, aggregation, and advanced indexing
-- Profile and tune code for speed and memory efficiency
-
-### Hands-On Code
-Choose a mini-project, such as:
-- Analyzing a large CSV dataset (e.g., weather, finance, or sensor data)
-- Simulating random walks or Monte Carlo experiments
-- Image processing with NumPy arrays
-
-Example: Simple Data Analysis
-```python
-import numpy as np
-# Simulate daily temperatures for a year
-temps = np.random.normal(loc=20, scale=5, size=365)
-print(f"Mean temp: {temps.mean():.2f}°C")
-print(f"Max temp: {temps.max():.2f}°C")
-print(f"Days above 25°C: {(temps > 25).sum()}")
-```
-
-### Exercise
-- Pick a dataset or simulation task
-- Use NumPy to analyze, visualize, or process the data
-- Profile your code and optimize for performance
-
-### Answer
-Answers will vary by project. Example for above:
-```text
-Mean temp: 20.12°C
-Max temp: 32.45°C
-Days above 25°C: 57
-```
-
-### Key Points
-- Real-world tasks benefit from NumPy's speed and expressiveness
-- Profiling and vectorization are essential for large data
-- Document your workflow and share results
-
----
-
-## 10. Wrap-up (16:50–17:00)
-
-### Questions
-- What are the most important NumPy concepts from today?
-- Where can I learn more and practice?
-
-### Objectives
-- Review key concepts and techniques
-- Identify resources for further learning
-- Gather feedback and answer remaining questions
+## 7. Wrap-up (16:50–17:00)
 
 ### Summary
 - NumPy arrays: creation, indexing, views, and memory
