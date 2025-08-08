@@ -67,9 +67,6 @@ After completing this setup, learners will be able to:
 import sys, numpy as np
 print("Python version:", sys.version.split()[0])
 print("NumPy version:", np.__version__)
-# Check basic array
-a = np.array([1,2,3])
-print("Test array:", a)
 ```
 
 **Exercise**  
@@ -77,9 +74,8 @@ Run the code above. Confirm that you’re running Python 3.6+ and NumPy 1.15+ (o
 
 **Answer**  
 ```text
-Python version: 3.8.10
-NumPy version: 1.21.4
-Test array: [1 2 3]
+Python version: 3.13.1
+NumPy version: 2.3.1
 ```  
 Participants should see their local versions, confirming a valid environment.
 
@@ -133,13 +129,44 @@ result = numbers + 10
 print(f"Added 10: {result}")
 ```
 
-### Performance Comparison
+### Why is NumPy Faster?
 
-Now that we understand basic NumPy usage, let's see why it's faster:
+Let's compare doing the same task with Python lists vs NumPy arrays:
 
 ```python
-import timeit
 import numpy as np
+
+# Task: Double all numbers from 0 to 999
+print("=== Doubling 1000 numbers ===")
+
+# Method 1: Python list with loop
+python_numbers = list(range(1000))
+python_doubled = []
+for num in python_numbers:
+    python_doubled.append(num * 2)
+
+print(f"Python approach: Created list of {len(python_doubled)} numbers")
+print(f"First 5 results: {python_doubled[:5]}")
+
+# Method 2: NumPy array (vectorized)
+numpy_numbers = np.arange(1000)
+numpy_doubled = numpy_numbers * 2  # This multiplies ALL numbers at once!
+
+print(f"NumPy approach: Created array of {len(numpy_doubled)} numbers")
+print(f"First 5 results: {numpy_doubled[:5]}")
+print(f"Results are the same: {python_doubled[:5] == numpy_doubled[:5].tolist()}")
+```
+
+### Key Differences
+
+```python
+# 1. Code simplicity
+print("\n=== Code Comparison ===")
+print("Python: Need a loop to process each number")
+print("NumPy:  One operation processes ALL numbers")
+
+# 2. Speed demonstration (simple version)
+import timeit
 
 # Python list approach
 def py_sum(n):
@@ -160,94 +187,74 @@ np_time = timeit.timeit(lambda: np_sum(n), number=10)
 print(f"Python list: {py_time:.4f}s")
 print(f"NumPy array: {np_time:.4f}s")
 print(f"NumPy is {py_time/np_time:.1f}x faster")
+
+# 3. Memory efficiency
+# np. arange: Return evenly spaced values within a given interval
+numbers = np.arange(1000)
+print(f"\n=== Memory Usage ===")
+print(f"NumPy array uses: {numbers.nbytes} bytes")
+print(f"That's only {numbers.nbytes/1000:.1f} bytes per number!")
 ```
 
-### Memory Efficiency
+### When Should You Use NumPy?
 
 ```python
-# Memory usage comparison
-py_result = py_sum(1000)
-np_result = np_sum(1000)
+# NumPy is great for:
+print("\n=== When to Use NumPy ===")
 
-print(f"\nMemory usage comparison:")
-print(f"Python list memory: ~{1000 * 28} bytes")  # Rough estimate
-print(f"NumPy array memory: {np_result.nbytes} bytes")
-print(f"Memory savings: {(1000 * 28 - np_result.nbytes) / (1000 * 28) * 100:.1f}%")
-```
+# Large amounts of numerical data
+temperatures = np.array([20.5, 22.1, 19.8, 25.0, 23.2])
+print(f"Daily temperatures: {temperatures}")
+print(f"Average temperature: {temperatures.mean():.1f}°C")
+print(f"Hottest day: {temperatures.max():.1f}°C")
 
-### Type Consistency
+# Mathematical operations on many numbers
+scores = np.array([85, 92, 78, 96, 88])
+print(f"\nTest scores: {scores}")
+print(f"Add 5 bonus points to all: {scores + 5}")
+print(f"Convert to percentages: {scores}%")
 
-```python
-# Data type advantages
-print(f"\nType consistency:")
-print(f"Python list element types: {[type(x) for x in py_result[:3]]}")
-print(f"NumPy array dtype: {np_result.dtype}")
-```
+# Working with grids/tables of data
+sales_data = np.array([[100, 150, 200],    # Store 1: Jan, Feb, Mar
+                       [120, 130, 180],    # Store 2: Jan, Feb, Mar  
+                       [90,  140, 220]])   # Store 3: Jan, Feb, Mar
 
-### Vectorized Operations
-
-```python
-# Mathematical operations on large datasets
-data = np.random.randn(1_000_000)
-print(f"\nMath operations on large arrays:")
-print(f"Mean: {data.mean():.4f}")
-print(f"Standard deviation: {data.std():.4f}")
-print(f"Maximum: {data.max():.4f}")
+print(f"\nSales data shape: {sales_data.shape} (3 stores × 3 months)")
+print(f"Total sales per store: {sales_data.sum(axis=1)}")
+print(f"Total sales per month: {sales_data.sum(axis=0)}")
 ```
 
 ### Exercise
-1. Time both functions (py_sum vs. np_sum) for n=2_000_000 and record the results
-2. Create a function that computes the dot product of two vectors using pure Python vs NumPy
-3. Compare the performance of element-wise square root calculation for 1 million numbers
+1. Create a NumPy array with numbers 1 to 10, then multiply all numbers by 3
+2. Compare how you would calculate the average of 5 test scores using Python lists vs NumPy
+3. Try using NumPy to add 10 to every element in an array
 
 #### Answer
 
 ```python
-# 1. Timing for larger n
-n = 2_000_000
-py_time = timeit.timeit(lambda: py_sum(n), number=5)
-np_time = timeit.timeit(lambda: np_sum(n), number=5)
-print(f"Python list (n=2M): {py_time:.4f}s")
-print(f"NumPy array (n=2M): {np_time:.4f}s")
-print(f"NumPy is {py_time/np_time:.1f}x faster")
+# 1. Create array and multiply by 3
+numbers = np.arange(1, 11)  # Creates [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+tripled = numbers * 3
+print(f"Original: {numbers}")
+print(f"Tripled:  {tripled}")
 
-# 2. Dot product comparison
-def py_dot_product(a, b):
-    return sum(x * y for x, y in zip(a, b))
+# 2. Average calculation comparison
+test_scores = [85, 92, 78, 96, 88]
 
-def np_dot_product(a, b):
-    return np.dot(a, b)
+# Python way
+python_average = sum(test_scores) / len(test_scores)
+print(f"Python average: {python_average:.1f}")
 
-# Test vectors
-vec_size = 10_000
-a_py = list(range(vec_size))
-b_py = list(range(vec_size, 2*vec_size))
-a_np = np.array(a_py)
-b_np = np.array(b_py)
+# NumPy way
+np_scores = np.array(test_scores)
+numpy_average = np_scores.mean()
+print(f"NumPy average: {numpy_average:.1f}")
 
-py_dot_time = timeit.timeit(lambda: py_dot_product(a_py, b_py), number=100)
-np_dot_time = timeit.timeit(lambda: np_dot_product(a_np, b_np), number=100)
-print(f"Python dot product: {py_dot_time:.4f}s")
-print(f"NumPy dot product: {np_dot_time:.4f}s")
-print(f"NumPy is {py_dot_time/np_dot_time:.1f}x faster")
-
-# 3. Square root comparison
-import math
-
-def py_sqrt(data):
-    return [math.sqrt(x) for x in data]
-
-def np_sqrt(data):
-    return np.sqrt(data)
-
-test_data = list(range(1, 1_000_001))  # 1 to 1 million
-np_test_data = np.array(test_data)
-
-py_sqrt_time = timeit.timeit(lambda: py_sqrt(test_data), number=3)
-np_sqrt_time = timeit.timeit(lambda: np_sqrt(np_test_data), number=3)
-print(f"Python sqrt: {py_sqrt_time:.4f}s")
-print(f"NumPy sqrt: {np_sqrt_time:.4f}s")
-print(f"NumPy is {py_sqrt_time/np_sqrt_time:.1f}x faster")
+# 3. Add 10 to every element
+original = np.array([1, 5, 10, 15, 20])
+plus_ten = original + 10
+print(f"Original: {original}")
+print(f"Plus 10:  {plus_ten}")
 ```
 
 ### Key Points
@@ -1062,616 +1069,236 @@ print(f"Normalized column means: {normalized.mean(axis=0)}")
 
 ---
 
-### Aggregations
-
-**Hands‑On Code**  
-```python
-import numpy as np
-
-# Comprehensive Aggregation Functions (inspired by VanderPlas Ch 2.04)
-print(f"=== Aggregation Functions ===")
-
-# Performance comparison: Python vs NumPy
-big_array = np.random.random(1000000)
-print(f"Performance comparison on 1M elements:")
-
-# Time comparison (conceptual - actual timing would vary)
-# Python sum: ~100ms, NumPy sum: ~500μs (200x faster)
-print(f"Sum result: {np.sum(big_array):.4f}")
-print(f"NumPy sum is ~200x faster than Python's built-in sum()")
-
-# Comprehensive aggregation table (following VanderPlas Table 2-3)
-data = np.random.randn(1000)
-print(f"\nComprehensive aggregations on random data (n=1000):")
-print(f"{'Function':<20} {'Result':<15} {'NaN-safe version'}")
-print("-" * 55)
-print(f"{'np.sum':<20} {np.sum(data):<15.4f} {'np.nansum'}")
-print(f"{'np.mean':<20} {np.mean(data):<15.4f} {'np.nanmean'}")
-print(f"{'np.std':<20} {np.std(data):<15.4f} {'np.nanstd'}")
-print(f"{'np.min':<20} {np.min(data):<15.4f} {'np.nanmin'}")
-print(f"{'np.max':<20} {np.max(data):<15.4f} {'np.nanmax'}")
-print(f"{'np.median':<20} {np.median(data):<15.4f} {'np.nanmedian'}")
-
-# Multi-dimensional aggregations with axis examples
-print(f"\n=== Multi-dimensional Aggregations ===")
-matrix = np.random.random((3, 4))
-print(f"Matrix (3x4):\n{matrix}")
-
-print(f"\nAggregations along different axes:")
-print(f"Overall sum: {matrix.sum():.4f}")
-print(f"Sum of each column (axis=0): {matrix.sum(axis=0)}")  # Shape: (4,)
-print(f"Sum of each row (axis=1): {matrix.sum(axis=1)}")     # Shape: (3,)
-
-# Boolean aggregations
-heights = np.array([170, 175, 180, 185, 190])
-tall_threshold = 180
-print(f"\nBoolean aggregations:")
-print(f"Heights: {heights}")
-print(f"Number > {tall_threshold}cm: {np.sum(heights > tall_threshold)}")
-print(f"Percentage > {tall_threshold}cm: {100 * np.mean(heights > tall_threshold):.1f}%")
-```
-
-### Key Points - Aggregations
-- Aggregation functions like `sum()`, `mean()`, `max()` can operate on entire arrays or along specific axes
-- Use `axis` parameter to control which dimension is aggregated
-- NaN-safe versions (e.g., `np.nanmean`) handle missing data appropriately
-- Boolean aggregations enable counting and percentage calculations
-
----
-
 ## 5. Advanced indexing and reshaping (15:00–16:00)
 
 ### Questions
-- How can I use advanced indexing techniques for complex data manipulation?
-- What's the difference between reshaping and flattening arrays?
-- How do I combine and split arrays efficiently?
+- How can I select specific data from arrays using conditions?
+- When would I need to change the shape of my arrays?
+- How do I combine data from multiple arrays?
 
 ### Objectives
 After completing this episode, learners will be able to:
-- Use advanced indexing techniques including fancy and boolean indexing
-- Reshape arrays while understanding memory layout implications
-- Combine and split arrays using concatenation and stacking
-- Apply advanced indexing to real-world data manipulation problems
+- Use boolean indexing to filter data based on conditions
+- Select specific elements using fancy indexing
+- Reshape arrays for different data analysis needs
+- Combine and split arrays for data processing workflows
 
 **Hands‑On Code**  
+
+### Part A: Boolean Indexing - Filtering Your Data
+
 ```python
 import numpy as np
 
-# Boolean indexing
-print("=== Boolean Indexing ===")
-data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-mask = data > 5
-print(f"Data: {data}")
-print(f"Mask (data > 5): {mask}")
-print(f"Values > 5: {data[mask]}")
+# Real-world example: Student grades
+print("=== Student Grade Analysis ===")
+student_names = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eva', 'Frank']
+grades = np.array([85, 92, 78, 96, 88, 74])
 
-# Fancy indexing
-print(f"\n=== Fancy Indexing ===")
-indices = [1, 3, 7]
-print(f"Elements at indices {indices}: {data[indices]}")
+print(f"Students: {student_names}")
+print(f"Grades: {grades}")
 
-# 2D boolean indexing
-matrix = np.random.randint(0, 10, (4, 4))
-print(f"\nMatrix:\n{matrix}")
-print(f"Values > 5:\n{matrix[matrix > 5]}")
+# Find students who passed (grade >= 80)
+passing_mask = grades >= 80
+print(f"\nPassing grades mask: {passing_mask}")
+print(f"Passing grades: {grades[passing_mask]}")
 
-# Array reshaping
-print(f"\n=== Reshaping Arrays ===")
-arr = np.arange(12)
-print(f"Original: {arr}")
-print(f"Reshaped (3,4):\n{arr.reshape(3, 4)}")
-print(f"Reshaped (2,6):\n{arr.reshape(2, 6)}")
+# Which students passed? (using same mask on names)
+passing_students = np.array(student_names)[passing_mask]
+print(f"Students who passed: {list(passing_students)}")
 
-# Array concatenation
-print(f"\n=== Array Concatenation ===")
-a = np.array([1, 2, 3])
-b = np.array([4, 5, 6])
-print(f"Concatenate: {np.concatenate([a, b])}")
+# Multiple conditions: Students with grades between 80-90
+good_grades = (grades >= 80) & (grades <= 90)
+print(f"Students with 80-90: {grades[good_grades]}")
 
-# 2D concatenation
-matrix1 = np.ones((2, 3))
-matrix2 = np.zeros((2, 3))
-print(f"Vertical stack:\n{np.vstack([matrix1, matrix2])}")
-print(f"Horizontal stack:\n{np.hstack([matrix1, matrix2])}")
+# Modify grades: Add 5 points to failing students
+print(f"\nOriginal grades: {grades}")
+grades[grades < 80] += 5  # Boolean indexing for modification
+print(f"After bonus points: {grades}")
 ```
 
-### Key Points - Advanced Indexing
-- Boolean indexing provides powerful filtering capabilities
-- Fancy indexing allows selection of arbitrary array elements
-- Reshaping changes array dimensions while preserving data
-- Use concatenation and stacking to combine arrays
+### Part B: Fancy Indexing - Selecting Specific Elements
 
----
-- Stack and split arrays using various NumPy functions
-- Manipulate array dimensions for different data processing needs
-
-**Hands‑On Code**  
 ```python
-import numpy as np
-
-# Advanced indexing demonstrations
-print("=== Advanced Indexing ===")
-
-# Fancy indexing for reordering
-x = np.arange(9)
-order = [8, 2, 5, 0]
-reordered = x[order]
-print(f"Original array: {x}")
-print(f"Reordered by indices {order}: {reordered}")
-
-# Fancy indexing with 2D arrays
-matrix = np.arange(12).reshape(3, 4)
-print(f"\nMatrix:\n{matrix}")
-
-# Select specific elements using coordinate arrays
-rows = np.array([0, 1, 2])
-cols = np.array([1, 2, 3])
-elements = matrix[rows, cols]  # Gets (0,1), (1,2), (2,3)
-print(f"Elements at (0,1), (1,2), (2,3): {elements}")
-
-# Select multiple rows and columns
-selected_rows = matrix[[0, 2]]  # Rows 0 and 2
-selected_cols = matrix[:, [1, 3]]  # Columns 1 and 3
-selected_block = matrix[[0, 2]][:, [1, 3]]  # Intersection
-print(f"Selected rows [0,2]:\n{selected_rows}")
-print(f"Selected columns [1,3]:\n{selected_cols}")
-print(f"Block [0,2] × [1,3]:\n{selected_block}")
-
-# Boolean indexing for modification
-y = np.arange(10)
-print(f"\nBefore modification: {y}")
-y[y % 2 == 1] *= -1  # Negate odd numbers
-print(f"After negating odds: {y}")
-
-# Complex boolean conditions
-data = np.random.randn(20)
-# Replace values outside [-2, 2] with the median
-median_val = np.median(data)
-mask = (data < -2) | (data > 2)
-data[mask] = median_val
-print(f"Data after clipping outliers (replaced {np.sum(mask)} values)")
-
-# Comprehensive Boolean Arrays & Masking (VanderPlas Ch 2.06)
-print(f"\n=== Comparison Operators as Universal Functions ===")
-
-# All comparison operators are ufuncs
-x = np.array([1, 2, 3, 4, 5])
-print(f"Array x: {x}")
-
-# Comparison operators table (following VanderPlas)
-print(f"\nComparison Operators:")
-print(f"x < 3:  {x < 3}")   # np.less(x, 3)
-print(f"x > 3:  {x > 3}")   # np.greater(x, 3)  
-print(f"x <= 3: {x <= 3}")  # np.less_equal(x, 3)
-print(f"x >= 3: {x >= 3}")  # np.greater_equal(x, 3)
-print(f"x != 3: {x != 3}")  # np.not_equal(x, 3)
-print(f"x == 3: {x == 3}")  # np.equal(x, 3)
-
-# Element-wise comparison of arrays
-print(f"\nElement-wise array comparisons:")
-y = np.array([0, 2, 3, 4, 6])
-print(f"x = {x}")
-print(f"y = {y}")
-print(f"x > y: {x > y}")
-print(f"x == y: {x == y}")
-
-# Compound expressions
-print(f"(2 * x) == (x ** 2): {(2 * x) == (x ** 2)}")
-
-# 2D example
-print(f"\n2D Array Comparisons:")
-matrix = np.random.RandomState(0).randint(10, size=(3, 4))
-print(f"Matrix:\n{matrix}")
-print(f"Matrix < 6:\n{matrix < 6}")
-
-print(f"\n=== Working with Boolean Arrays ===")
-
-# Counting True values
-print(f"Counting entries:")
-mask = matrix < 6
-print(f"Count of values < 6: {np.count_nonzero(mask)}")
-print(f"Count using sum: {np.sum(mask)}")  # True=1, False=0
-print(f"Count per row: {np.sum(mask, axis=1)}")
-
-# Testing any/all
-print(f"\nTesting conditions:")
-print(f"Any values > 8? {np.any(matrix > 8)}")
-print(f"Any values < 0? {np.any(matrix < 0)}")
-print(f"All values < 10? {np.all(matrix < 10)}")
-print(f"All values == 6? {np.all(matrix == 6)}")
-print(f"All values < 8 in each row? {np.all(matrix < 8, axis=1)}")
-
-print(f"\n=== Boolean Operators ===")
-
-# Simulate rainfall data for practical example
-np.random.seed(42)
-inches = np.random.exponential(0.2, 365)  # Simulated daily rainfall
-
-print(f"Rainfall analysis (365 days):")
-print(f"Days with 0.5-1.0 inches: {np.sum((inches > 0.5) & (inches < 1))}")
-
-# Important: parentheses required due to operator precedence!
-print(f"\nParentheses are crucial:")
-print("Correct:   (inches > 0.5) & (inches < 1)")
-print("Incorrect: inches > 0.5 & inches < 1  # This would error!")
-
-# De Morgan's laws demonstration
-result1 = np.sum((inches > 0.5) & (inches < 1))
-result2 = np.sum(~((inches <= 0.5) | (inches >= 1)))
-print(f"Using AND: {result1}")
-print(f"Using De Morgan's law: {result2}")
-print(f"Results identical? {result1 == result2}")
-
-# Boolean operators table
-print(f"\nBoolean Operators:")
-print(f"& (and):  np.bitwise_and")
-print(f"| (or):   np.bitwise_or") 
-print(f"^ (xor):  np.bitwise_xor")
-print(f"~ (not):  np.bitwise_not")
-
-# Practical weather analysis
-print(f"\nWeather Statistics:")
-print(f"Days without rain: {np.sum(inches == 0)}")
-print(f"Days with rain: {np.sum(inches != 0)}")
-print(f"Days with >0.5 inches: {np.sum(inches > 0.5)}")
-print(f"Rainy days with <0.2 inches: {np.sum((inches > 0) & (inches < 0.2))}")
-
-print(f"\n=== and/or vs &/| Important Distinction ===")
-
-# Demonstrate the difference
-print(f"Keywords vs Operators:")
-print(f"and/or: evaluate truth of ENTIRE object")
-print(f"&/|:    bitwise operations on ELEMENTS")
-
-# Example with integers
-print(f"\nWith integers:")
-print(f"bool(42): {bool(42)}")
-print(f"bool(0): {bool(0)}")
-print(f"bool(42 and 0): {bool(42 and 0)}")  # False
-print(f"bool(42 or 0): {bool(42 or 0)}")    # True
-
-# Bitwise on integers
-print(f"bin(42): {bin(42)}")
-print(f"bin(59): {bin(59)}")
-print(f"bin(42 & 59): {bin(42 & 59)}")
-print(f"bin(42 | 59): {bin(42 | 59)}")
-
-# With boolean arrays
-A = np.array([1, 0, 1, 0, 1, 0], dtype=bool)
-B = np.array([1, 1, 1, 0, 1, 1], dtype=bool)
-print(f"\nWith boolean arrays:")
-print(f"A: {A}")
-print(f"B: {B}")
-print(f"A | B: {A | B}")  # Element-wise OR
-
-try:
-    result = A or B  # This will fail
-except ValueError as e:
-    print(f"A or B fails: {e}")
-
-# Correct usage for array conditions
-data = np.arange(10)
-print(f"\nCorrect array logic:")
-print(f"(data > 4) & (data < 8): {(data > 4) & (data < 8)}")
-
-try:
-    wrong = (data > 4) and (data < 8)  # This will fail
-except ValueError as e:
-    print(f"(data > 4) and (data < 8) fails: {e}")
-
-print(f"\n=== Fancy Indexing (VanderPlas Ch 2.07) ===")
-
-# Basic fancy indexing
-rand = np.random.RandomState(42)
-x = rand.randint(100, size=10)
-print(f"Array: {x}")
-
-# Select multiple elements
-indices = [3, 7, 4]
-selected = x[indices]
-print(f"Indices {indices}: {selected}")
-
-# Shape of result reflects shape of index array
-ind_2d = np.array([[3, 7], [4, 5]])
-result_2d = x[ind_2d]
-print(f"2D indices:\n{ind_2d}")
-print(f"2D result:\n{result_2d}")
-
-# 2D fancy indexing
-X = np.arange(12).reshape(3, 4)
-print(f"\n2D Array:\n{X}")
-
-# Select specific elements
-row = np.array([0, 1, 2])
-col = np.array([2, 1, 3])
-elements = X[row, col]  # (0,2), (1,1), (2,3)
-print(f"Elements at coordinates: {elements}")
-
-# Broadcasting in fancy indexing
-print(f"Broadcasting with fancy indexing:")
-print(f"X[row[:, np.newaxis], col]:\n{X[row[:, np.newaxis], col]}")
-
-print(f"\n=== Combined Indexing ===")
-
-# Mix fancy indexing with other methods
-print(f"Original array:\n{X}")
-print(f"X[2, [2, 0, 1]]: {X[2, [2, 0, 1]]}")  # Row 2, specific columns
-print(f"X[1:, [2, 0, 1]]:\n{X[1:, [2, 0, 1]]}")  # Slice + fancy
-
-# Fancy + boolean masking
-mask = np.array([1, 0, 1, 0], dtype=bool)
-print(f"X[row[:, np.newaxis], mask]:\n{X[row[:, np.newaxis], mask]}")
-
-print(f"\n=== Modifying Values with Fancy Indexing ===")
-
-# Modify multiple elements
-x = np.arange(10)
-i = np.array([2, 1, 8, 4])
-print(f"Before: {x}")
-
-x[i] = 99
-print(f"After x[i] = 99: {x}")
-
-x[i] -= 10  
-print(f"After x[i] -= 10: {x}")
-
-# Repeated indices behavior
-print(f"\nRepeated indices behavior:")
-x = np.zeros(10)
-x[[0, 0]] = [4, 6]
-print(f"x[[0, 0]] = [4, 6] → x[0] = {x[0]}")  # Last assignment wins
-
-# Accumulating with repeated indices
-i = [2, 3, 3, 4, 4, 4]
-x = np.zeros(10)
-x[i] += 1
-print(f"x[{i}] += 1 → x = {x}")  # Each position incremented once only
-
-# Correct way to accumulate
-x = np.zeros(10)
-np.add.at(x, i, 1)  # Accumulate properly
-print(f"np.add.at(x, {i}, 1) → x = {x}")  # Proper accumulation
-
-print(f"\n=== Practical Example: Random Point Selection ===")
-
-# Generate random 2D points
-mean = [0, 0]
-cov = [[1, 2], [2, 5]]
-points = rand.multivariate_normal(mean, cov, 100)
-print(f"Generated {points.shape[0]} random points")
-
-# Select 20 random points using fancy indexing
-indices = np.random.choice(points.shape[0], 20, replace=False)
-selection = points[indices]
-print(f"Selected {selection.shape[0]} random points")
-print(f"Selected indices: {indices[:10]}...")  # Show first 10
-
-print(f"\n=== Data Binning Example ===")
-
-# Efficient histogram computation
-np.random.seed(42)
-data = np.random.randn(100)
-
-# Manual binning using fancy indexing
-bins = np.linspace(-5, 5, 20)
-counts = np.zeros_like(bins)
-
-# Find appropriate bin for each data point
-i = np.searchsorted(bins, data)
-np.add.at(counts, i, 1)
-
-print(f"Data range: [{data.min():.2f}, {data.max():.2f}]")
-print(f"Number of bins: {len(bins)}")
-print(f"Counts per bin (first 10): {counts[:10]}")
-
-# Compare with numpy histogram
-np_counts, np_edges = np.histogram(data, bins)
-print(f"NumPy histogram matches: {np.allclose(counts[:-1], np_counts)}")
-
-print(f"\n=== Reshaping Operations ===")
-
-# Basic reshaping
-z = np.arange(12)
-print(f"Original 1D: {z}")
-mat2x6 = z.reshape(2, 6)
-mat3x4 = z.reshape(3, 4)
-mat4x3 = z.reshape(4, 3)
-print(f"Reshaped 2×6:\n{mat2x6}")
-print(f"Reshaped 3×4:\n{mat3x4}")
-print(f"Reshaped 4×3:\n{mat4x3}")
-
-# Automatic dimension calculation
-auto_reshape = z.reshape(3, -1)  # -1 means "figure it out"
-print(f"Auto reshape (3, -1):\n{auto_reshape}")
-
-# Flatten vs ravel
-original = mat3x4.copy()
-flat_copy = original.flatten()  # Always returns a copy
-flat_view = original.ravel()    # Returns view if possible
-
-print(f"Original:\n{original}")
-flat_copy[0] = 999
-flat_view[1] = 888
-print(f"After modifying flattened arrays:")
-print(f"Original after flatten modify:\n{original}")  # unchanged
-print(f"Original after ravel modify:\n{original}")    # changed at position 1
-
-print(f"\n=== Array Joining ===")
-
-# Stacking operations
-arr1 = np.array([[1, 2], [3, 4]])
-arr2 = np.array([[5, 6], [7, 8]])
-print(f"Array 1:\n{arr1}")
-print(f"Array 2:\n{arr2}")
-
-# Different stacking methods
-vstack_result = np.vstack([arr1, arr2])  # Vertical stack
-hstack_result = np.hstack([arr1, arr2])  # Horizontal stack
-dstack_result = np.dstack([arr1, arr2])  # Depth stack (along 3rd dimension)
-
-print(f"Vertical stack (vstack):\n{vstack_result}")
-print(f"Horizontal stack (hstack):\n{hstack_result}")
-print(f"Depth stack (dstack) shape: {dstack_result.shape}")
-
-# Concatenation with axis specification
-concat_axis0 = np.concatenate([arr1, arr2], axis=0)  # Same as vstack
-concat_axis1 = np.concatenate([arr1, arr2], axis=1)  # Same as hstack
-print(f"Concatenate axis=0:\n{concat_axis0}")
-print(f"Concatenate axis=1:\n{concat_axis1}")
-
-# Stack creates new dimension
-stack_axis0 = np.stack([arr1, arr2], axis=0)  # Shape: (2, 2, 2)
-stack_axis1 = np.stack([arr1, arr2], axis=1)  # Shape: (2, 2, 2)
-stack_axis2 = np.stack([arr1, arr2], axis=2)  # Shape: (2, 2, 2)
-print(f"Stack axis=0 shape: {stack_axis0.shape}")
-print(f"Stack axis=1 shape: {stack_axis1.shape}")
-print(f"Stack axis=2 shape: {stack_axis2.shape}")
-
-print(f"\n=== Array Splitting ===")
-
-# Splitting arrays
-data_1d = np.arange(12)
-print(f"1D data: {data_1d}")
-
-# Equal splits
-equal_splits = np.split(data_1d, 4)  # Split into 4 equal parts
-print(f"Split into 4 equal parts: {[arr.tolist() for arr in equal_splits]}")
-
-# Split at specific indices
-index_splits = np.split(data_1d, [3, 7])  # Split at indices 3 and 7
-print(f"Split at indices [3,7]: {[arr.tolist() for arr in index_splits]}")
-
-# 2D splitting
-data_2d = np.arange(24).reshape(4, 6)
-print(f"2D data shape: {data_2d.shape}")
-
-# Split along different axes
-vsplit_result = np.vsplit(data_2d, 2)  # Split vertically (along rows)
-hsplit_result = np.hsplit(data_2d, 3)  # Split horizontally (along columns)
-
-print(f"Vertical split into 2 parts: {[arr.shape for arr in vsplit_result]}")
-print(f"Horizontal split into 3 parts: {[arr.shape for arr in hsplit_result]}")
-
-# Array splitting with unequal parts
-unequal_splits = np.array_split(data_1d, 5)  # 5 parts (some may be different sizes)
-print(f"Unequal splits: {[arr.tolist() for arr in unequal_splits]}")
-
-print(f"\n=== Advanced Reshaping ===")
-
-# Transpose and swapping axes
-matrix_3d = np.arange(24).reshape(2, 3, 4)
-print(f"3D array shape: {matrix_3d.shape}")
-
-# Different transpose operations
-transposed = matrix_3d.transpose()  # Reverse all axes
-transposed_custom = matrix_3d.transpose(2, 0, 1)  # Specify axis order
-swapped = matrix_3d.swapaxes(0, 2)  # Swap axes 0 and 2
-
-print(f"Original shape: {matrix_3d.shape}")
-print(f"Transposed shape: {transposed.shape}")
-print(f"Custom transpose (2,0,1): {transposed_custom.shape}")
-print(f"Swapped axes 0&2: {swapped.shape}")
-
-# Adding and removing dimensions
-print(f"\n=== Dimension Manipulation ===")
-vector = np.array([1, 2, 3, 4])
-print(f"Original vector shape: {vector.shape}")
-
-# Add dimensions
-col_vector = vector[:, np.newaxis]  # Add column dimension
-row_vector = vector[np.newaxis, :]  # Add row dimension
-matrix_form = vector[:, np.newaxis, np.newaxis]  # Add multiple dimensions
-
-print(f"Column vector shape: {col_vector.shape}")
-print(f"Row vector shape: {row_vector.shape}")
-print(f"Matrix form shape: {matrix_form.shape}")
-
-# Remove dimensions (squeeze)
-squeezed = np.squeeze(matrix_form)  # Remove single dimensions
-print(f"After squeeze: {squeezed.shape}")
+print("\n=== Fancy Indexing Examples ===")
+
+# Example: Monthly sales data for different stores
+monthly_sales = np.array([
+    [120, 135, 142, 155],  # Store A: Jan, Feb, Mar, Apr
+    [98,  108, 125, 140],  # Store B: Jan, Feb, Mar, Apr  
+    [145, 152, 138, 160]   # Store C: Jan, Feb, Mar, Apr
+])
+
+print("Monthly sales (rows=stores, cols=months):")
+print(monthly_sales)
+
+# Select specific stores (rows 0 and 2)
+selected_stores = monthly_sales[[0, 2]]
+print(f"\nStores A and C only:\n{selected_stores}")
+
+# Select specific months (columns 1 and 3 = Feb and Apr)
+selected_months = monthly_sales[:, [1, 3]]
+print(f"\nFeb and Apr data:\n{selected_months}")
+
+# Select specific store-month combinations
+store_indices = [0, 1, 2]  # Store A, B, C
+month_indices = [0, 2, 3]  # Jan, Mar, Apr
+specific_data = monthly_sales[store_indices, month_indices]
+print(f"\nStore A-Jan, Store B-Mar, Store C-Apr: {specific_data}")
 ```
 
-**Exercise**  
-1. Create a 3×3 array with values 0–8, use fancy indexing to pick elements at positions [(0,2), (1,1), (2,0)].
-2. Split the 3×3 array into three 1×3 subarrays.
-3. Create two 2×3 arrays, stack them vertically, then split the result back into the original arrays.
-4. Use reshaping to convert a 1D array of 24 elements into a 3D array of shape (2,3,4).
+### Part C: Reshaping - Changing Array Dimensions
 
-**Answer**  
 ```python
-# 1. Fancy indexing on 3×3 array
-x = np.arange(9).reshape(3, 3)
-print("Original 3×3 array:")
-print(x)
+print("\n=== Reshaping for Different Analysis ===")
 
-# Method 1: Using coordinate arrays
-rows = [0, 1, 2]
-cols = [2, 1, 0]
-selected = x[rows, cols]
-print(f"Selected elements at (0,2), (1,1), (2,0): {selected}")  # [2, 4, 6]
+# Example: Daily temperature data for a week
+daily_temps = np.array([22, 24, 26, 25, 23, 21, 20, 
+                       23, 25, 27, 26, 24, 22, 21])
+print(f"14 days of temperature data: {daily_temps}")
 
-# Method 2: Using list of tuples (alternative approach)
-positions = [(0, 2), (1, 1), (2, 0)]
-selected_alt = [x[r, c] for r, c in positions]
-print(f"Alternative selection: {selected_alt}")
+# Reshape into 2 weeks × 7 days for weekly analysis
+weekly_temps = daily_temps.reshape(2, 7)
+print(f"\nReshaped into weeks:\n{weekly_temps}")
+print(f"Week 1 average: {weekly_temps[0].mean():.1f}°C")
+print(f"Week 2 average: {weekly_temps[1].mean():.1f}°C")
 
-# 2. Split into 1×3 subarrays
-splits = np.split(x, 3, axis=0)  # Split along rows
-print(f"Split shapes: {[s.shape for s in splits]}")  # [(1,3), (1,3), (1,3)]
-print("Split arrays:")
-for i, split in enumerate(splits):
-    print(f"  Split {i}: {split}")
+# Reshape into 7 days × 2 weeks for daily patterns
+daily_pattern = daily_temps.reshape(7, 2)
+print(f"\nDaily patterns across weeks:\n{daily_pattern}")
+print(f"Monday temperatures: {daily_pattern[0]}")
+print(f"Sunday temperatures: {daily_pattern[6]}")
 
-# 3. Stack and split operations
-arr1 = np.array([[1, 2, 3], [4, 5, 6]])
-arr2 = np.array([[7, 8, 9], [10, 11, 12]])
-print(f"\nOriginal arrays:")
-print(f"Array 1:\n{arr1}")
-print(f"Array 2:\n{arr2}")
+# Automatic dimension calculation using -1
+auto_reshape = daily_temps.reshape(-1, 2)  # NumPy calculates first dimension
+print(f"\nAuto reshape (-1, 2): shape {auto_reshape.shape}")
+```
 
-# Stack vertically
-stacked = np.vstack([arr1, arr2])
-print(f"Stacked shape: {stacked.shape}")
-print(f"Stacked array:\n{stacked}")
+### Part D: Combining Arrays - Stacking Data
 
-# Split back to original
-split_back = np.split(stacked, 2, axis=0)
-reconstructed1, reconstructed2 = split_back
-print(f"Reconstructed arrays:")
-print(f"Reconstructed 1:\n{reconstructed1}")
-print(f"Reconstructed 2:\n{reconstructed2}")
+```python
+print("\n=== Combining Data from Different Sources ===")
 
-# Verify they match
-print(f"Array 1 matches: {np.array_equal(arr1, reconstructed1)}")
-print(f"Array 2 matches: {np.array_equal(arr2, reconstructed2)}")
+# Example: Combining test scores from different classes
+class_a_scores = np.array([85, 92, 78, 88])
+class_b_scores = np.array([90, 87, 95, 82])
 
-# 4. 1D to 3D reshaping
-data_1d = np.arange(24)
-print(f"\n1D array: {data_1d}")
-print(f"1D shape: {data_1d.shape}")
+print(f"Class A scores: {class_a_scores}")
+print(f"Class B scores: {class_b_scores}")
 
-# Reshape to 3D
-data_3d = data_1d.reshape(2, 3, 4)
-print(f"3D shape: {data_3d.shape}")
-print(f"3D array:\n{data_3d}")
+# Stack vertically (add Class B below Class A)
+all_scores = np.vstack([class_a_scores, class_b_scores])
+print(f"\nAll scores (classes as rows):\n{all_scores}")
 
-# Verify total elements preserved
-print(f"Original size: {data_1d.size}")
-print(f"3D size: {data_3d.size}")
-print(f"Sizes match: {data_1d.size == data_3d.size}")
+# Stack horizontally (add Class B beside Class A)  
+side_by_side = np.hstack([class_a_scores, class_b_scores])
+print(f"All scores in one row: {side_by_side}")
 
-# Alternative reshape methods
-alt_3d_1 = data_1d.reshape(-1, 3, 4)  # Auto-calculate first dimension
-alt_3d_2 = data_1d.reshape(2, -1, 4)  # Auto-calculate second dimension
-print(f"Alternative shapes: {alt_3d_1.shape}, {alt_3d_2.shape}")
-```  
+# More complex example: Adding a new semester
+semester1 = np.array([[85, 92], [78, 88]])  # 2 students × 2 tests
+semester2 = np.array([[90, 87], [82, 95]])  # 2 students × 2 tests
+
+print(f"\nSemester 1 scores:\n{semester1}")
+print(f"Semester 2 scores:\n{semester2}")
+
+# Combine semesters (add semester 2 as new columns)
+yearly_scores = np.hstack([semester1, semester2])
+print(f"\nFull year scores (4 tests per student):\n{yearly_scores}")
+```
+
+### Part E: Splitting Arrays - Breaking Data Apart
+
+```python
+print("\n=== Splitting Data for Analysis ===")
+
+# Example: Hourly data for 24 hours
+hourly_data = np.arange(24)  # Hours 0-23
+print(f"24 hours of data: {hourly_data}")
+
+# Split into 3 shifts of 8 hours each
+shifts = np.split(hourly_data, 3)
+morning, afternoon, night = shifts
+print(f"Morning shift (0-7): {morning}")
+print(f"Afternoon shift (8-15): {afternoon}")  
+print(f"Night shift (16-23): {night}")
+
+# Split at specific points (e.g., work hours vs off-hours)
+work_split = np.split(hourly_data, [9, 17])  # Split at hour 9 and 17
+before_work, work_hours, after_work = work_split
+print(f"\nBefore work (0-8): {before_work}")
+print(f"Work hours (9-16): {work_hours}")
+print(f"After work (17-23): {after_work}")
+
+# 2D splitting example
+sales_matrix = np.arange(12).reshape(3, 4)  # 3 stores × 4 quarters
+print(f"\nQuarterly sales by store:\n{sales_matrix}")
+
+# Split by quarters
+quarters = np.hsplit(sales_matrix, 4)  # Horizontal split
+print(f"Q1 sales: {quarters[0].flatten()}")
+print(f"Q4 sales: {quarters[3].flatten()}")
+```
+
+### Exercise
+1. Given a list of test scores `[75, 82, 90, 68, 95, 78, 85]`, use boolean indexing to find scores above 80
+2. Use fancy indexing to select the 1st, 3rd, and 5th elements from an array
+3. Reshape a 1D array of 12 numbers into a 3×4 matrix, then into a 4×3 matrix
+4. Create two 2×2 arrays and stack them both vertically and horizontally
+
+### Answer
+
+```python
+# 1. Boolean indexing for high scores
+scores = np.array([75, 82, 90, 68, 95, 78, 85])
+print(f"All scores: {scores}")
+
+high_scores = scores[scores > 80]
+print(f"Scores above 80: {high_scores}")
+
+# Find positions of high scores
+high_score_positions = np.where(scores > 80)
+print(f"Positions of high scores: {high_score_positions[0]}")
+
+# 2. Fancy indexing for specific elements
+data = np.array([10, 20, 30, 40, 50, 60])
+indices = [0, 2, 4]  # 1st, 3rd, 5th (0-indexed)
+selected = data[indices]
+print(f"\nOriginal data: {data}")
+print(f"Selected elements (1st, 3rd, 5th): {selected}")
+
+# 3. Reshaping examples
+numbers = np.arange(12)  # 0 to 11
+print(f"\nOriginal 1D array: {numbers}")
+
+# Reshape to 3×4
+matrix_3x4 = numbers.reshape(3, 4)
+print(f"Reshaped to 3×4:\n{matrix_3x4}")
+
+# Reshape to 4×3
+matrix_4x3 = numbers.reshape(4, 3)
+print(f"Reshaped to 4×3:\n{matrix_4x3}")
+
+# 4. Stacking arrays
+array1 = np.array([[1, 2], [3, 4]])
+array2 = np.array([[5, 6], [7, 8]])
+print(f"\nArray 1:\n{array1}")
+print(f"Array 2:\n{array2}")
+
+# Vertical stacking (top to bottom)
+vertical_stack = np.vstack([array1, array2])
+print(f"Stacked vertically:\n{vertical_stack}")
+
+# Horizontal stacking (side by side)
+horizontal_stack = np.hstack([array1, array2])
+print(f"Stacked horizontally:\n{horizontal_stack}")
+```
 
 ### Key Points
-- Advanced indexing allows complex data selection and manipulation patterns
-- Reshaping preserves total number of elements but changes array dimensions
-- Use `-1` in reshape to automatically calculate one dimension
-- Stacking functions (`vstack`, `hstack`, `dstack`) combine arrays along different axes
-- Splitting functions reverse stacking operations and are useful for data partitioning
+- Boolean indexing is perfect for filtering data based on conditions
+- Fancy indexing lets you pick specific elements by their positions  
+- Reshaping changes dimensions but keeps the same total number of elements
+- Stacking combines multiple arrays - use `vstack` for rows, `hstack` for columns
+- These techniques are essential for real-world data manipulation and analysis
 
 ---
 
