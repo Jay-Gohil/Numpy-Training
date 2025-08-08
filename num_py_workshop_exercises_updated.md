@@ -713,23 +713,39 @@ print(f"Sum result: {np.sum(big_array):.4f}")
 print(f"NumPy sum is ~200x faster than Python's built-in sum()")
 
 # Comprehensive aggregation table (following VanderPlas Table 2-3)
-data = np.random.randn(1000)
 print(f"\nComprehensive aggregations on random data (n=1000):")
-print(f"{'Function':<20} {'Result':<15} {'NaN-safe version'}")
-print("-" * 55)
-print(f"{'np.sum':<20} {np.sum(data):<15.4f} {'np.nansum'}")
-print(f"{'np.prod':<20} {np.prod(data[:10]):<15.4f} {'np.nanprod'}")  # Use subset for product
-print(f"{'np.mean':<20} {np.mean(data):<15.4f} {'np.nanmean'}")
-print(f"{'np.std':<20} {np.std(data):<15.4f} {'np.nanstd'}")
-print(f"{'np.var':<20} {np.var(data):<15.4f} {'np.nanvar'}")
-print(f"{'np.min':<20} {np.min(data):<15.4f} {'np.nanmin'}")
-print(f"{'np.max':<20} {np.max(data):<15.4f} {'np.nanmax'}")
-print(f"{'np.argmin':<20} {np.argmin(data):<15} {'np.nanargmin'}")
-print(f"{'np.argmax':<20} {np.argmax(data):<15} {'np.nanargmax'}")
-print(f"{'np.median':<20} {np.median(data):<15.4f} {'np.nanmedian'}")
-print(f"{'np.percentile':<20} {np.percentile(data, 25):<15.4f} {'np.nanpercentile'}")
-print(f"{'np.any':<20} {str(np.any(data > 0)):<15} {'N/A'}")
-print(f"{'np.all':<20} {str(np.all(data > -5)):<15} {'N/A'}")
+data = np.random.randn(1000)
+
+# Table format following VanderPlas style
+aggregations = [
+    ('np.sum', np.sum(data), 'np.nansum', 'Sum of elements'),
+    ('np.prod', np.prod(data[:10]), 'np.nanprod', 'Product of elements'),  # Use subset for product
+    ('np.mean', np.mean(data), 'np.nanmean', 'Mean of elements'),
+    ('np.std', np.std(data), 'np.nanstd', 'Standard deviation'),
+    ('np.var', np.var(data), 'np.nanvar', 'Variance'),
+    ('np.min', np.min(data), 'np.nanmin', 'Minimum value'),
+    ('np.max', np.max(data), 'np.nanmax', 'Maximum value'),
+    ('np.argmin', np.argmin(data), 'np.nanargmin', 'Index of minimum'),
+    ('np.argmax', np.argmax(data), 'np.nanargmax', 'Index of maximum'),
+    ('np.median', np.median(data), 'np.nanmedian', 'Median value'),
+    ('np.percentile', np.percentile(data, 25), 'np.nanpercentile', '25th percentile'),
+    ('np.any', np.any(data > 0), 'N/A', 'Any elements True'),
+    ('np.all', np.all(data > -5), 'N/A', 'All elements True')
+]
+
+print(f"{'Function':<15} {'Result':<12} {'NaN-safe':<15} {'Description'}")
+print("-" * 70)
+for func, result, nan_safe, desc in aggregations:
+    if isinstance(result, (int, np.integer)):
+        result_str = f"{result}"
+    elif isinstance(result, bool):
+        result_str = f"{result}"
+    else:
+        result_str = f"{result:.4f}"
+    print(f"{func:<15} {result_str:<12} {nan_safe:<15} {desc}")
+
+print(f"\nNote: NaN-safe versions ignore NaN values in calculations")
+print(f"      Use them when your data might contain missing values")
 
 # Multi-dimensional aggregations with axis examples
 print(f"\n=== Multi-dimensional Aggregations ===")
@@ -753,40 +769,91 @@ print(f"np.sum(matrix): {np.sum(matrix):.4f}")
 print(f"matrix.min(): {matrix.min():.4f}")
 print(f"np.min(matrix): {np.min(matrix):.4f}")
 
-# Practical example: US Presidents Heights (inspired by VanderPlas)
-print(f"\n=== Practical Example: Statistical Analysis ===")
-# Simulated height data (in cm) - representing US president heights
-np.random.seed(42)  # For reproducible results
-heights = np.random.normal(179.7, 6.9, 44)  # Mean and std from VanderPlas example
-heights = np.round(heights).astype(int)
+# Practical example: US Presidents Heights (following VanderPlas Ch 2.04)
+print(f"\n=== Practical Example: US President Heights Analysis ===")
 
-print(f"Height analysis (n={len(heights)} presidents):")
-print(f"Mean height: {heights.mean():.1f} cm")
-print(f"Standard deviation: {heights.std():.1f} cm")
-print(f"Minimum height: {heights.min()} cm")
-print(f"Maximum height: {heights.max()} cm")
-print(f"25th percentile: {np.percentile(heights, 25):.1f} cm")
-print(f"Median: {np.median(heights):.1f} cm")  
-print(f"75th percentile: {np.percentile(heights, 75):.1f} cm")
+# Loading data from CSV files (real-world skill)
+print("=== Loading Data from CSV ===")
+print("Loading president heights using NumPy:")
+print("  heights = np.loadtxt('president_heights.csv', delimiter=',', skiprows=1, usecols=2)")
 
-# Boolean aggregations
-tall_presidents = heights > 180
-print(f"\nBoolean aggregations:")
-print(f"Number of presidents > 180cm: {np.sum(tall_presidents)}")
-print(f"Percentage > 180cm: {100 * np.mean(tall_presidents):.1f}%")
-print(f"Any president > 190cm? {np.any(heights > 190)}")
-print(f"All presidents > 160cm? {np.all(heights > 160)}")
+# Load the actual president heights data from CSV
+president_heights = np.loadtxt('president_heights.csv', delimiter=',', skiprows=1, usecols=2)
 
-# Working with missing data (NaN-safe functions)
-heights_with_missing = heights.astype(float)
-heights_with_missing[[5, 12, 23]] = np.nan  # Introduce some missing values
+print(f"Loaded {len(president_heights)} president heights from CSV file")
+print(f"Data preview: {president_heights[:5]}... (first 5 values)")
+print(f"Data source: president_heights.csv")
 
-print(f"\n=== Working with Missing Data ===")
+# Basic aggregations following VanderPlas examples
+print(f"\n=== Basic Statistical Aggregations ===")
+print(f"Mean height: {president_heights.mean():.1f} cm")
+print(f"Standard deviation: {president_heights.std():.1f} cm")
+print(f"Minimum height: {president_heights.min()} cm ({np.argmin(president_heights) + 1}th president)")
+print(f"Maximum height: {president_heights.max()} cm ({np.argmax(president_heights) + 1}th president)")
+
+# Quantile aggregations
+print(f"\n=== Quantile Analysis ===")
+print(f"25th percentile: {np.percentile(president_heights, 25):.1f} cm")
+print(f"Median (50th percentile): {np.median(president_heights):.1f} cm")  
+print(f"75th percentile: {np.percentile(president_heights, 75):.1f} cm")
+
+# Alternative quantile method
+print(f"Median (alternative): {np.quantile(president_heights, 0.5):.1f} cm")
+print(f"Interquartile range: {np.percentile(president_heights, 75) - np.percentile(president_heights, 25):.1f} cm")
+
+# Boolean aggregations following VanderPlas pattern
+print(f"\n=== Boolean Aggregations (VanderPlas Pattern) ===")
+print(f"How many presidents are taller than the mean?")
+tall_presidents = president_heights > president_heights.mean()
+print(f"  Answer: {np.sum(tall_presidents)} out of {len(president_heights)}")
+print(f"  Percentage: {100 * np.mean(tall_presidents):.1f}%")
+
+print(f"\nHow many presidents are shorter than 170cm?")
+short_presidents = president_heights < 170
+print(f"  Answer: {np.sum(short_presidents)} presidents")
+
+print(f"\nHow many presidents are between 175cm and 185cm?")
+medium_presidents = (president_heights >= 175) & (president_heights <= 185)
+print(f"  Answer: {np.sum(medium_presidents)} presidents")
+
+# VanderPlas-style aggregation questions
+print(f"\n=== VanderPlas-Style Analysis Questions ===")
+print(f"Are there any presidents taller than 190cm? {np.any(president_heights > 190)}")
+print(f"Are all presidents taller than 160cm? {np.all(president_heights > 160)}")
+print(f"Are all presidents shorter than 200cm? {np.all(president_heights < 200)}")
+
+# Historical insights using boolean indexing
+print(f"\n=== Historical Insights ===")
+very_tall = president_heights >= 190
+print(f"Very tall presidents (≥190cm): {np.sum(very_tall)} total")
+if np.any(very_tall):
+    tall_indices = np.where(very_tall)[0]
+    print(f"  President numbers: {[i+1 for i in tall_indices]}")  # 1-indexed
+
+very_short = president_heights <= 170
+print(f"Very short presidents (≤170cm): {np.sum(very_short)} total")
+if np.any(very_short):
+    short_indices = np.where(very_short)[0]
+    print(f"  President numbers: {[i+1 for i in short_indices]}")  # 1-indexed
+
+# Working with missing data (NaN-safe functions) - VanderPlas Section 2.04
+print(f"\n=== Working with Missing Data (NaN-safe aggregations) ===")
+# Simulate some missing data for demonstration
+heights_with_missing = president_heights.astype(float)
+heights_with_missing[[4, 12, 22]] = np.nan  # James Monroe, Fillmore, Cleveland
+
+print(f"Original data points: {len(president_heights)}")
 print(f"Data with missing values: {np.sum(np.isnan(heights_with_missing))} NaN values")
+print(f"Valid data points: {np.sum(~np.isnan(heights_with_missing))}")
+
+print(f"\nComparison of regular vs NaN-safe functions:")
 print(f"Regular mean (with NaN): {np.mean(heights_with_missing)}")  # Returns NaN
 print(f"NaN-safe mean: {np.nanmean(heights_with_missing):.1f} cm")
+print(f"Regular std (with NaN): {np.std(heights_with_missing)}")   # Returns NaN
 print(f"NaN-safe std: {np.nanstd(heights_with_missing):.1f} cm")
-print(f"NaN-safe count: {np.sum(~np.isnan(heights_with_missing))} valid values")
+print(f"NaN-safe median: {np.nanmedian(heights_with_missing):.1f} cm")
+print(f"NaN-safe min: {np.nanmin(heights_with_missing):.0f} cm")
+print(f"NaN-safe max: {np.nanmax(heights_with_missing):.0f} cm")
 
 # Cumulative operations
 arr = np.array([1, 2, 3, 4, 5])
@@ -824,7 +891,7 @@ print(f"Scale values in [-1,1) by 10: {result}")
 1. For `x = np.array([1, 2, 3, 4])`, compute `ln(x)`, `sqrt(x)`, and cumulative product.
 2. Create two arrays and compute element-wise max and min.
 3. Use `np.where` to replace negative values with 0 and positive values with their square.
-4. Compute the dot product and outer product of two vectors.
+4. Load the president heights data and answer: "What percentage of presidents are above average height?"
 
 ### Answer
 ```python
@@ -856,28 +923,21 @@ result = np.where(data < 0, 0, data**2)
 print(f"\nOriginal: {data}")
 print(f"Negative→0, Positive→square: {result}")  # [0 0 0 4 16 0]
 
-# Alternative for more complex conditions:
-result2 = np.where(data < 0, 0, np.where(data == 0, 0, data**2))
-print(f"Same result with nested where: {result2}")
+# 4. President heights analysis (VanderPlas style)
+heights = np.loadtxt('president_heights.csv', delimiter=',', skiprows=1, usecols=2)
 
-# 4. Dot and outer products
-u = np.array([1, 2, 3])
-v = np.array([4, 5, 6])
+mean_height = heights.mean()
+above_average = heights > mean_height
+percentage_above = 100 * np.mean(above_average)
 
-dot_product = np.dot(u, v)
-outer_product = np.outer(u, v)
+print(f"\nPresident Heights Analysis:")
+print(f"Mean height: {mean_height:.1f} cm")
+print(f"Presidents above average: {np.sum(above_average)} out of {len(heights)}")
+print(f"Percentage above average: {percentage_above:.1f}%")
 
-print(f"\nu = {u}")
-print(f"v = {v}")
-print(f"Dot product: {dot_product}")  # 32 (1*4 + 2*5 + 3*6)
-print(f"Outer product:\n{outer_product}")
-# [[4  5  6]
-#  [8 10 12]
-#  [12 15 18]]
-
-# Bonus: Cross product (for 3D vectors)
-cross_product = np.cross(u, v)
-print(f"Cross product: {cross_product}")  # [-3  6 -3]
+# Bonus: Tallest and shortest presidents
+print(f"Tallest president: {heights.max()} cm (#{np.argmax(heights) + 1})")
+print(f"Shortest president: {heights.min()} cm (#{np.argmin(heights) + 1})")
 ```  
 
 ### Key Points - Universal Functions
