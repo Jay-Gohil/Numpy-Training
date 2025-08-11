@@ -336,12 +336,38 @@ print(f"  arange(2, 10, 2): {arange_range}")
 print(f"  arange(0.5, 3.0, 0.5): {arange_float}")
 
 # np.linspace() - Creates evenly spaced numbers
-linspace_basic = np.linspace(0, 1, 5)     # 5 points from 0 to 1
-linspace_exclusive = np.linspace(0, 1, 5, endpoint=False)
-
 print(f"\nnp.linspace() - Creates evenly spaced numbers")
+print("Key difference: linspace specifies NUMBER of points, arange specifies STEP size")
+
+# Basic linspace usage
+linspace_basic = np.linspace(0, 1, 5)     # 5 points from 0 to 1 (inclusive)
 print(f"  linspace(0, 1, 5): {linspace_basic}")
-print(f"  without endpoint: {linspace_exclusive}")
+print(f"    Creates exactly 5 points from 0 to 1")
+
+# More linspace examples
+linspace_10 = np.linspace(0, 10, 11)      # 11 points from 0 to 10
+linspace_pi = np.linspace(0, np.pi, 4)    # 4 points from 0 to π
+linspace_exclusive = np.linspace(0, 1, 5, endpoint=False)  # Exclude endpoint
+
+print(f"  linspace(0, 10, 11): {linspace_10}")
+print(f"  linspace(0, π, 4): {linspace_pi}")
+print(f"  linspace(0, 1, 5, endpoint=False): {linspace_exclusive}")
+
+# Practical comparison: arange vs linspace
+print(f"\n=== arange vs linspace comparison ===")
+print("Creating points from 0 to 2:")
+print(f"arange(0, 2.5, 0.5): {np.arange(0, 2.5, 0.5)}")     # Step-based
+print(f"linspace(0, 2, 5): {np.linspace(0, 2, 5)}")         # Count-based
+
+print(f"\nWhen to use which:")
+print(f"  arange: When you know the STEP size you want")
+print(f"  linspace: When you know the NUMBER of points you want")
+
+# Getting both values and step size
+values, step = np.linspace(0, 1, 5, retstep=True)
+print(f"\nWith retstep=True:")
+print(f"  Values: {values}")
+print(f"  Step size: {step}")
 ```
 
 ### Special Arrays
@@ -353,20 +379,27 @@ print("np.eye() - Creates identity matrices")
 print(f"  3x3 identity:\n{identity_3x3}")
 
 # Random arrays
-np.random.seed(42)  # For reproducible results
-random_uniform = np.random.random((2, 3))    # Uniform [0, 1)
-random_normal = np.random.normal(0, 1, (2, 3))  # Normal distribution
+rng = np.random.default_rng(42)  # Create random number generator with seed
+random_uniform = rng.random((2, 3))         # Uniform [0, 1)
+random_normal = rng.normal(0, 1, (2, 3))    # Normal distribution (mean=0, std=1)
 
 print(f"\nRandom arrays:")
 print(f"  Uniform random:\n{random_uniform}")
 print(f"  Normal distribution:\n{random_normal}")
+
+# More random array examples
+random_integers = rng.integers(1, 10, size=(2, 4))  # Random integers 1-9
+random_choice = rng.choice(['A', 'B', 'C'], size=5)  # Random choices
+print(f"  Random integers (1-9):\n{random_integers}")
+print(f"  Random choices: {random_choice}")
 ```
 
 ### Array Inspection
 
 ```python
-# Create sample array for inspection
-sample_array = np.random.normal(0, 1, (3, 4)).astype(np.float32)
+# Create sample array for inspection using modern random API
+rng = np.random.default_rng(42)
+sample_array = rng.normal(0, 1, (3, 4)).astype(np.float32)
 
 print("Array inspection:")
 print(f"  Array:\n{sample_array}")
@@ -381,29 +414,129 @@ print(f"  .itemsize: {sample_array.itemsize} - Bytes per element")
 ### Data Type Information
 
 ```python
-# Understanding data types
+# Understanding NumPy data types and their characteristics
+print("=== NumPy Data Types Overview ===")
+
+# Automatic type inference
 int_array = np.array([1, 2, 3, 4])
 float_array = np.array([1.0, 2.5, 3.7])
+mixed_array = np.array([1, 2.5, 3])  # Promotes to float
 
-print(f"\nData types:")
-print(f"Integer array dtype: {int_array.dtype}")
-print(f"Float array dtype: {float_array.dtype}")
+print(f"Automatic type inference:")
+print(f"Integer array: {int_array.dtype}")
+print(f"Float array: {float_array.dtype}")
+print(f"Mixed array: {mixed_array.dtype} (promoted to float)")
 
-# Memory comparison
-data = [1, 2, 3, 4, 5]
-small_ints = np.array(data, dtype=np.int8)
-large_ints = np.array(data, dtype=np.int64)
+# Integer types and their ranges
+print(f"\n=== Integer Data Types ===")
+integer_types = [np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64]
 
-print(f"\nMemory efficiency:")
-print(f"int8 memory: {small_ints.nbytes} bytes")
-print(f"int64 memory: {large_ints.nbytes} bytes")
+for dtype in integer_types:
+    info = np.iinfo(dtype)
+    arr = np.array([100], dtype=dtype)
+    print(f"{dtype.__name__:<8}: range [{info.min:>20}, {info.max:>20}], size: {arr.itemsize} bytes")
+
+# Float types and their precision
+print(f"\n=== Floating Point Data Types ===")
+float_types = [np.float16, np.float32, np.float64]
+
+for dtype in float_types:
+    info = np.finfo(dtype)
+    arr = np.array([3.14159], dtype=dtype)
+    print(f"{dtype.__name__:<9}: precision: ~{info.precision} digits, range: ~1e{int(info.maxexp*0.3)}, size: {arr.itemsize} bytes")
+    print(f"            Value: {arr[0]}")
+
+# Boolean and complex types
+print(f"\n=== Other Data Types ===")
+bool_array = np.array([True, False, True], dtype=np.bool_)
+complex_array = np.array([1+2j, 3+4j], dtype=np.complex128)
+
+print(f"Boolean: {bool_array.dtype}, size: {bool_array.itemsize} byte per element")
+print(f"Complex: {complex_array.dtype}, size: {complex_array.itemsize} bytes per element")
+
+# Data type drawbacks and limitations
+print(f"\n=== Data Type Drawbacks and Limitations ===")
+
+# 1. Integer overflow
+print("1. Integer Overflow:")
+small_int = np.array([127], dtype=np.int8)
+print(f"   int8 value: {small_int[0]}")
+try:
+    overflowed = small_int + np.array([1], dtype=np.int8)
+    print(f"   127 + 1 = {overflowed[0]} (overflow! wraps to negative)")
+except:
+    print("   Overflow detected")
+
+# 2. Precision loss in floats
+print(f"\n2. Floating Point Precision Loss:")
+precise_value = np.pi
+float32_value = np.array([precise_value], dtype=np.float32)
+float64_value = np.array([precise_value], dtype=np.float64)
+
+print(f"   Original π: {precise_value}")
+print(f"   float32 π:  {float32_value[0]}")
+print(f"   float64 π:  {float64_value[0]}")
+print(f"   Precision lost in float32: {abs(precise_value - float32_value[0]):.2e}")
+
+# 3. Memory vs precision trade-offs
+print(f"\n3. Memory vs Precision Trade-offs:")
+large_data = np.ones(1_000_000)
+large_float32 = large_data.astype(np.float32)
+large_float64 = large_data.astype(np.float64)
+
+print(f"   1M elements as float32: {large_float32.nbytes / 1024**2:.1f} MB")
+print(f"   1M elements as float64: {large_float64.nbytes / 1024**2:.1f} MB")
+print(f"   Memory savings with float32: {(1 - large_float32.nbytes/large_float64.nbytes)*100:.0f}%")
+
+# 4. Type casting dangers
+print(f"\n4. Dangerous Type Casting:")
+float_data = np.array([3.7, 4.9, 5.1])
+int_cast = float_data.astype(np.int32)  # Truncation, not rounding!
+print(f"   Original floats: {float_data}")
+print(f"   Cast to int32:   {int_cast} (truncated, not rounded!)")
+
+# 5. Platform dependencies
+print(f"\n5. Platform Dependencies:")
+print(f"   Default int: {np.array([1]).dtype} (platform dependent)")
+print(f"   Default float: {np.array([1.0]).dtype} (usually float64)")
+
+# Best practices
+print(f"\n=== Best Practices ===")
 ```
+
+### Best Practices for NumPy Data Types
+
+**Do's:**
+- **Be explicit about data types** when precision matters for calculations
+- **Use the smallest suitable type** to save memory for large arrays
+- **Be aware of overflow** in integer operations, especially with small integer types
+- **Use float64** for calculations requiring high precision (scientific computing)
+- **Consider float32** for large datasets where precision requirements allow
+- **Check type ranges** using `np.iinfo()` and `np.finfo()` when working with edge values
+- **Plan for memory usage** in advance for large-scale data processing
+
+**Don'ts:**
+- **Avoid implicit type casting** that might lose data or precision
+- **Don't assume platform-independent behavior** with default types
+- **Don't ignore overflow warnings** - they indicate potential data corruption
+- **Avoid mixing types unnecessarily** - it can lead to unexpected promotions
+- **Don't use oversized types** when smaller ones suffice (memory waste)
+
+**Type Selection Guidelines:**
+- **uint8**: Image data, sensor readings (0-255 range)
+- **int32/int64**: General integer calculations, indices
+- **float32**: Graphics, machine learning (when precision allows)
+- **float64**: Scientific computing, financial calculations
+- **bool**: Logical operations, masks
+- **complex**: Signal processing, mathematical computations
+
+```python
 
 ### Exercise
 1. Create a 3×4 array filled with the value 7 using np.full, then report min, max, and mean
 2. Create a 5×5 identity matrix and modify it to have 2s on the diagonal  
-3. Generate a 4×4 array where each element equals i*j (row × column indices)
-4. Create arrays with different data types and compare their memory usage per element
+3. Use `np.linspace()` to create 50 evenly spaced points between 0 and 2π, then compute sin of each point
+4. Compare `np.arange(0, 1, 0.1)` vs `np.linspace(0, 1, 11)` - what's the difference?
 
 #### Answer
 
@@ -417,47 +550,33 @@ print(f"Min: {sevens_array.min()}, Max: {sevens_array.max()}, Mean: {sevens_arra
 identity = np.eye(5)
 print(f"Original identity matrix:\n{identity}")
 
-# Method 1: In-place multiplication
+# In-place multiplication
 identity *= 2  # Scale diagonal by 2
 print(f"2x Identity matrix:\n{identity}")
 
-# Alternative method: Direct creation
-identity2 = np.eye(5) * 2
-print(f"Alternative approach:\n{identity2}")
+# 3. Linspace for trigonometric functions
+x = np.linspace(0, 2*np.pi, 50)  # 50 points from 0 to 2π
+y = np.sin(x)
+print(f"X values (first 5): {x[:5]}")
+print(f"Sin values (first 5): {y[:5]}")
+print(f"Created {len(x)} points for smooth sin curve")
 
-# 3. Array where each element equals i*j (row × column)
-# Method 1: Using np.fromfunction() - elegant approach
-def index_product(i, j):
-    return i * j
+# 4. arange vs linspace comparison
+arange_result = np.arange(0, 1, 0.1)
+linspace_result = np.linspace(0, 1, 11)
 
-product_array = np.fromfunction(index_product, (4, 4))
-print(f"i*j array using fromfunction:\n{product_array}")
+print(f"\narange(0, 1, 0.1): {arange_result}")
+print(f"Length: {len(arange_result)}")
+print(f"Last value: {arange_result[-1]:.1f}")
 
-# Method 2: Using broadcasting - more explicit
-i = np.arange(4).reshape(4, 1)  # Column vector [0, 1, 2, 3]
-j = np.arange(4)                # Row vector [0, 1, 2, 3]
-product_array2 = i * j          # Broadcasting creates 4x4 result
-print(f"i*j array using broadcasting:\n{product_array2}")
+print(f"\nlinspace(0, 1, 11): {linspace_result}")
+print(f"Length: {len(linspace_result)}")
+print(f"Last value: {linspace_result[-1]:.1f}")
 
-# 4. Data type memory comparison
-print(f"\nData type memory usage comparison:")
-test_data = [1, 2, 3, 4, 5]
-dtypes = [np.int8, np.int16, np.int32, np.int64, np.float32, np.float64]
-
-print(f"{'Data Type':<10} {'Bytes/Element':<13} {'Total Bytes':<11}")
-print("-" * 35)
-
-for dtype in dtypes:
-    arr = np.array(test_data, dtype=dtype)
-    print(f"{dtype.__name__:<10} {arr.itemsize:<13} {arr.nbytes:<11}")
-
-# Memory efficiency demonstration
-large_int8 = np.ones(1_000_000, dtype=np.int8)
-large_int64 = np.ones(1_000_000, dtype=np.int64)
-print(f"\nMemory efficiency (1M elements):")
-print(f"int8: {large_int8.nbytes / 1024**2:.1f} MB")
-print(f"int64: {large_int64.nbytes / 1024**2:.1f} MB")
-print(f"Savings: {(1 - large_int8.nbytes/large_int64.nbytes)*100:.1f}%")
+print(f"\nKey differences:")
+print(f"- arange: step-based, may not include endpoint (0.9 vs 1.0)")
+print(f"- linspace: count-based, always includes endpoint")
+print(f"- arange gives 10 points, linspace gives exactly 11 points")
 ```
 
 ### Key Points
@@ -704,7 +823,8 @@ print(f"(a > 4) | (b < 5): {(a > 4) | (b < 5)}")
 print(f"\n=== Aggregation Functions ===")
 
 # Performance comparison: Python vs NumPy
-big_array = np.random.random(1000000)
+rng = np.random.default_rng(42)  # Modern random number generator
+big_array = rng.random(1000000)
 print(f"Performance comparison on 1M elements:")
 
 # Time comparison (conceptual - actual timing would vary)
@@ -714,7 +834,7 @@ print(f"NumPy sum is ~200x faster than Python's built-in sum()")
 
 # Comprehensive aggregation table (following VanderPlas Table 2-3)
 print(f"\nComprehensive aggregations on random data (n=1000):")
-data = np.random.randn(1000)
+data = rng.standard_normal(1000)  # Modern way to generate normal random data
 
 # Table format following VanderPlas style
 aggregations = [
@@ -749,7 +869,7 @@ print(f"      Use them when your data might contain missing values")
 
 # Multi-dimensional aggregations with axis examples
 print(f"\n=== Multi-dimensional Aggregations ===")
-matrix = np.random.random((3, 4))
+matrix = rng.random((3, 4))  # Using the same rng instance
 print(f"Matrix (3x4):\n{matrix}")
 print(f"Matrix shape: {matrix.shape}")
 
@@ -860,6 +980,83 @@ arr = np.array([1, 2, 3, 4, 5])
 print(f"\nCumulative operations on {arr}:")
 print(f"Cumulative sum: {np.cumsum(arr)}")
 print(f"Cumulative product: {np.cumprod(arr)}")
+```
+
+### Understanding Cumulative Operations
+
+Cumulative operations compute running totals or products as they move through an array. Unlike regular aggregations that reduce arrays to single values, cumulative operations preserve the array size while showing progressive calculations.
+
+**Cumulative Sum (`cumsum`):**
+- Takes each element and adds it to the sum of all previous elements
+- Example: `[1, 2, 3, 4, 5]` becomes `[1, 3, 6, 10, 15]`
+- Useful for: running totals, integration approximation, progress tracking
+
+**Cumulative Product (`cumprod`):**
+- Multiplies each element by the product of all previous elements  
+- Example: `[1, 2, 3, 4, 5]` becomes `[1, 2, 6, 24, 120]`
+- Useful for: compound interest, probability chains, factorial calculations
+
+### Array API Standard vs Legacy Functions
+
+NumPy is transitioning to the **Array API Standard** - a cross-library specification that ensures consistent behavior across different array libraries (NumPy, CuPy, JAX, etc.). This standardization makes code more portable and predictable.
+
+**Key Differences:**
+- **Legacy**: `np.cumsum()` - established function, universally available
+- **Array API**: `np.cumulative_sum()` - standardized name, explicit and clear
+- **Compatibility**: Array API functions require NumPy 1.22+ but provide better interoperability
+
+**Why the Change?**
+The Array API standard aims to create consistency across the scientific Python ecosystem. While legacy functions remain supported, new projects may benefit from using Array API functions for future compatibility.
+
+```python
+
+# Array API vs Legacy API comparison
+print(f"\n=== Array API vs Legacy API ===")
+print("NumPy provides two ways to compute cumulative operations:")
+
+# Legacy API (traditional NumPy)
+legacy_cumsum = np.cumsum(arr)
+print(f"Legacy API - np.cumsum(): {legacy_cumsum}")
+
+# Array API Standard (newer, more explicit)
+try:
+    array_api_cumsum = np.cumulative_sum(arr)
+    print(f"Array API - np.cumulative_sum(): {array_api_cumsum}")
+    print(f"Results are identical: {np.array_equal(legacy_cumsum, array_api_cumsum)}")
+except AttributeError:
+    print("Array API - np.cumulative_sum(): Not available in this NumPy version")
+    print("(Requires NumPy 1.22+ for Array API compliance)")
+```
+
+### Multi-dimensional Cumulative Operations
+
+When working with multi-dimensional arrays, cumulative operations can be applied along specific axes, allowing for sophisticated data analysis patterns.
+
+**Axis Parameter:**
+- `axis=0`: Operates along rows (down columns)
+- `axis=1`: Operates along columns (across rows)  
+- No axis: Flattens array first, then operates
+
+**Common Use Cases:**
+- **Financial Data**: Running totals of daily transactions by month
+- **Scientific Data**: Accumulated measurements over time or space
+- **Image Processing**: Progressive filters or cumulative transformations
+
+```python
+
+# Multi-dimensional cumulative operations
+print(f"\n=== Multi-dimensional cumulative operations ===")
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+print(f"Original matrix:\n{matrix}")
+
+# Cumulative sum along different axes
+cumsum_axis0 = np.cumsum(matrix, axis=0)  # Along rows
+cumsum_axis1 = np.cumsum(matrix, axis=1)  # Along columns
+cumsum_flat = np.cumsum(matrix)           # Flattened
+
+print(f"Cumsum along axis=0 (rows):\n{cumsum_axis0}")
+print(f"Cumsum along axis=1 (cols):\n{cumsum_axis1}")
+print(f"Cumsum flattened: {cumsum_flat}")
 
 # Advanced ufunc features
 # Reduce operations
@@ -1057,7 +1254,8 @@ print(f"\n=== Practical Broadcasting Applications ===")
 
 # Centering an array (VanderPlas example)
 print("1. Centering data (zero-mean)")
-X = np.random.random((10, 3))  # 10 observations, 3 features
+rng = np.random.default_rng(42)  # Create new RNG for consistency
+X = rng.random((10, 3))  # 10 observations, 3 features
 print(f"Data shape: {X.shape}")
 print(f"Original means: {X.mean(0)}")
 
@@ -1079,7 +1277,7 @@ print("This creates a 2D function over the entire x-y grid!")
 
 # Distance calculations
 print(f"\n3. Efficient distance calculations")
-points = np.random.random((5, 2))  # 5 points in 2D
+points = rng.random((5, 2))  # 5 points in 2D
 center = np.array([0.5, 0.5])
 
 # Method 1: Broadcasting for distance from center
@@ -1114,7 +1312,7 @@ sum_matrix = i_indices + j_indices
 print(f"Sum matrix (i+j):\n{sum_matrix}")
 
 # 3. Column-wise normalization
-data = np.random.randn(6, 4)  # 6 rows, 4 columns
+data = rng.standard_normal((6, 4))  # 6 rows, 4 columns
 col_means = data.mean(axis=0, keepdims=True)  # Shape: (1, 4)
 col_stds = data.std(axis=0, keepdims=True)    # Shape: (1, 4)
 normalized = (data - col_means) / col_stds
