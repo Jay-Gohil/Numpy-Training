@@ -2112,6 +2112,43 @@ arr_f = np.array([[1, 2, 3], [4, 5, 6]], order='F')  # Fortran-style (column-maj
 print(f"C-style flags: {arr_c.flags}")
 print(f"F-style flags: {arr_f.flags}")
 
+# Understanding memory order with np.nditer()
+print(f"\n=== Understanding Memory Order with np.nditer() ===")
+print("np.nditer() shows how NumPy traverses arrays in memory")
+
+# Create a 2x3 array for demonstration
+demo_array = np.array([[1, 2, 3], [4, 5, 6]])
+print(f"Demo array:\n{demo_array}")
+
+# C-order (row-major) - default NumPy behavior
+print(f"\nC-order (row-major) traversal:")
+print("Reads row by row: [1,2,3] then [4,5,6]")
+c_order = [x for x in np.nditer(demo_array, order='C')]
+print(f"C-order iteration: {c_order}")
+
+# F-order (column-major) - Fortran/MATLAB style
+print(f"\nF-order (column-major) traversal:")
+print("Reads column by column: [1,4] then [2,5] then [3,6]")
+f_order = [x for x in np.nditer(demo_array, order='F')]
+print(f"F-order iteration: {f_order}")
+
+# Demonstrate with reshape to show memory layout impact
+print(f"\n=== Memory Layout Impact on Operations ===")
+large_array = np.arange(6).reshape(2, 3)
+print(f"Array:\n{large_array}")
+
+# Flatten with different orders
+flat_c = large_array.flatten(order='C')  # Row-major
+flat_f = large_array.flatten(order='F')  # Column-major
+print(f"Flatten C-order: {flat_c}")  # [0,1,2,3,4,5]
+print(f"Flatten F-order: {flat_f}")  # [0,3,1,4,2,5]
+
+# Performance implications
+print(f"\n=== Why Order Matters for Performance ===")
+print("C-order (row-major): Better for row operations")
+print("F-order (column-major): Better for column operations")
+print("Choose order based on your data access patterns!")
+
 # Mini-project: Data analysis pipeline
 print(f"\n=== Mini-Project: Weather Data Analysis ===")
 # This would reference the weather notebook exercise
