@@ -94,7 +94,7 @@ Run the code above. Confirm that you’re running Python 3.6+ and NumPy 1.15+ (o
 ```text
 Python version: 3.13.1
 NumPy version: 2.3.1
-```  
+```
 Participants should see their local versions, confirming a valid environment.
 
 > **INSTRUCTOR NOTES**: Point out that their versions may differ, and that's fine. Use this opportunity to transition into why NumPy is so important in the Python ecosystem.
@@ -248,7 +248,7 @@ large_array = np.arange(1000)
 # Memory usage
 import sys
 list_memory = sys.getsizeof(large_list) + sum(sys.getsizeof(x) for x in large_list)
-array_memory = large_array.nbytes
+array_memory = sys.getsizeof(large_array)
 
 print(f"Memory usage for 1000 integers:")
 print(f"  Python list: ~{list_memory} bytes")
@@ -305,19 +305,6 @@ print("=== Python Array vs NumPy Array ===")
 print(f"Python array: {python_array}")
 print(f"NumPy array:  {numpy_array}")
 ```
-
-**Key Differences:**
-
-| Feature | Python `array` | NumPy `ndarray` |
-|---------|----------------|-----------------|
-| **Dimensions** | 1D only | Multidimensional |
-| **Math Operations** | Limited | Full vectorized support |
-| **Memory** | More efficient than lists | Most efficient |
-| **Dependencies** | Built-in Python | Requires NumPy library |
-| **Type Control** | Manual type codes ('i', 'f', 'd') | Automatic type inference |
-| **Performance** | Moderate | Fastest for numerical work |
-| **Ecosystem** | Minimal | Huge scientific ecosystem |
-
 ```python
 # Demonstrating the differences
 print(f"\n=== Capabilities Comparison ===")
@@ -341,7 +328,7 @@ large_python_array = array.array('i', range(1000))
 large_numpy_array = np.arange(1000, dtype=np.int32)
 
 print(f"Python array: {sys.getsizeof(large_python_array)} bytes")
-print(f"NumPy array:  {large_numpy_array.nbytes} bytes")
+print(f"NumPy array:  {sys.getsizeof(large_numpy_array)} bytes")
 
 # Multidimensional capability
 print(f"\nMultidimensional support:")
@@ -351,6 +338,18 @@ print(f"NumPy array: Can be multidimensional\n{numpy_2d}")
 ```
 
 > **INSTRUCTOR NOTES**: Most beginners don't know about Python's built-in array module. This comparison helps complete their understanding of the data structure landscape. Focus on the key point: array module is a middle ground, but NumPy's ecosystem makes it the clear choice for data work.
+
+**Key Differences:**
+
+| Feature | Python `array` | NumPy `ndarray` |
+|---------|----------------|-----------------|
+| **Dimensions** | 1D only | Multidimensional |
+| **Math Operations** | Limited | Full vectorized support |
+| **Memory** | More efficient than lists | Most efficient |
+| **Dependencies** | Built-in Python | Requires NumPy library |
+| **Type Control** | Manual type codes ('i', 'f', 'd') | Automatic type inference |
+| **Performance** | Moderate | Fastest for numerical work |
+| **Ecosystem** | Minimal | Huge scientific ecosystem |
 
 **When to Use Python's `array` Module:**
 - Simple 1D numeric data without NumPy dependency
@@ -366,59 +365,12 @@ print(f"NumPy array: Can be multidimensional\n{numpy_2d}")
 - Integration with scientific Python ecosystem
 
 
-
-### Basic Array Operations
-
-```python
-# Mathematical operations work on entire arrays
-numbers = np.array([1, 2, 3, 4])
-doubled = numbers * 2
-print(f"Original: {numbers}")
-print(f"Doubled: {doubled}")
-
-# Element-wise operations happen automatically
-result = numbers + 10
-print(f"Added 10: {result}")
-```
-
 > **INSTRUCTOR NOTES**: This reinforces the core concept - operations apply to every element automatically. No loops needed! This is the foundation that makes NumPy powerful.
 
 ### Why is NumPy Faster?
 
 Let's compare doing the same task with Python lists vs NumPy arrays:
-
 ```python
-import numpy as np
-
-# Task: Double all numbers from 0 to 999
-print("=== Doubling 1000 numbers ===")
-
-# Method 1: Python list with loop
-python_numbers = list(range(1000))
-python_doubled = []
-for num in python_numbers:
-    python_doubled.append(num * 2)
-
-print(f"Python approach: Created list of {len(python_doubled)} numbers")
-print(f"First 5 results: {python_doubled[:5]}")
-
-# Method 2: NumPy array (vectorized)
-numpy_numbers = np.arange(1000)
-numpy_doubled = numpy_numbers * 2  # This multiplies ALL numbers at once!
-
-print(f"NumPy approach: Created array of {len(numpy_doubled)} numbers")
-print(f"First 5 results: {numpy_doubled[:5]}")
-print(f"Results are the same: {python_doubled[:5] == numpy_doubled[:5].tolist()}")
-```
-
-### Key Differences
-
-```python
-# 1. Code simplicity
-print("\n=== Code Comparison ===")
-print("Python: Need a loop to process each number")
-print("NumPy:  One operation processes ALL numbers")
-
 # 2. Speed demonstration (simple version)
 import timeit
 
@@ -441,16 +393,9 @@ np_time = timeit.timeit(lambda: np_sum(n), number=10)
 print(f"Python list: {py_time:.4f}s")
 print(f"NumPy array: {np_time:.4f}s")
 print(f"NumPy is {py_time/np_time:.1f}x faster")
-
-> **INSTRUCTOR NOTES**: The performance difference is usually dramatic - often 10-100x faster! Explain that NumPy's speed comes from C implementations under the hood. For small arrays the difference matters less, but for real data work it's transformative.
-
-# 3. Memory efficiency
-# np. arange: Return evenly spaced values within a given interval
-numbers = np.arange(1000)
-print(f"\n=== Memory Usage ===")
-print(f"NumPy array uses: {numbers.nbytes} bytes")
-print(f"That's only {numbers.nbytes/1000:.1f} bytes per number!")
 ```
+> **INSTRUCTOR NOTES**: The performance difference is usually dramatic - often 10-100x faster! Explain that NumPy's speed comes from C implementations under the hood. For small arrays the difference matters less, but for real data work it's transformative.
+```python
 
 ### When Should You Use NumPy?
 
@@ -458,17 +403,17 @@ print(f"That's only {numbers.nbytes/1000:.1f} bytes per number!")
 # NumPy is great for:
 print("\n=== When to Use NumPy ===")
 
-# Large amounts of numerical data
-temperatures = np.array([20.5, 22.1, 19.8, 25.0, 23.2])
-print(f"Daily temperatures: {temperatures}")
-print(f"Average temperature: {temperatures.mean():.1f}°C")
-print(f"Hottest day: {temperatures.max():.1f}°C")
+# Large amounts of numerical data due to less memory consumption and performance
 
 # Mathematical operations on many numbers
 scores = np.array([85, 92, 78, 96, 88])
 print(f"\nTest scores: {scores}")
 print(f"Add 5 bonus points to all: {scores + 5}")
-print(f"Convert to percentages: {scores}%")
+
+temperatures = np.array([20.5, 22.1, 19.8, 25.0, 23.2])
+print(f"Daily temperatures: {temperatures}")
+print(f"Average temperature: {temperatures.mean():.1f}°C")
+print(f"Hottest day: {temperatures.max():.1f}°C")
 
 # Working with grids/tables of data
 sales_data = np.array([[100, 150, 200],    # Store 1: Jan, Feb, Mar
@@ -483,38 +428,44 @@ print(f"Total sales per month: {sales_data.sum(axis=0)}")
 > **INSTRUCTOR NOTES**: These examples show NumPy's practical value. Point out how `.mean()`, `.max()`, and `.sum()` are built-in methods that would require manual loops in pure Python. The sales_data example previews multidimensional arrays and the axis parameter.
 
 ### Exercise
-1. Create a NumPy array with numbers 1 to 10, then multiply all numbers by 3
-2. Compare how you would calculate the average of 5 test scores using Python lists vs NumPy
-3. Try using NumPy to add 10 to every element in an array
+1. Create a NumPy array with all even numbers from 2 to 100
+2. Calculate the standard deviation of these numbers using the mathematical formula: σ = √(Σ(x - μ)²/N)
 
-> **INSTRUCTOR NOTES**: Give them 5-7 minutes for this. Walk around and help. These exercises reinforce the key concepts: array creation, vectorized operations, and built-in functions. Most students should be able to complete this successfully.
+
+> **INSTRUCTOR NOTES**: This exercise demonstrates NumPy's power for both array creation and mathematical operations. The standard deviation calculation shows vectorized operations in action. Give them 8-10 minutes and encourage them to work through the formula step by step.
 
 #### Answer
 
 ```python
-# 1. Create array and multiply by 3
-numbers = np.arange(1, 11)  # Creates [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-tripled = numbers * 3
-print(f"Original: {numbers}")
-print(f"Tripled:  {tripled}")
+import numpy as np
+import time
 
-# 2. Average calculation comparison
-test_scores = [85, 92, 78, 96, 88]
+# 1. Create array of even numbers from 2 to 100 using logic
+print("=== Creating Even Numbers Array Using Logic ===")
 
-# Python way
-python_average = sum(test_scores) / len(test_scores)
-print(f"Python average: {python_average:.1f}")
+even_numbers_list = [i for i in range(1, 101) if i % 2 == 0]
+even_numbers = np.array(even_numbers_list)
+print(f"Using list comprehension: {even_numbers[:10]}... (showing first 10)")
 
-# NumPy way
-np_scores = np.array(test_scores)
-numpy_average = np_scores.mean()
-print(f"NumPy average: {numpy_average:.1f}")
+# 2. Calculate standard deviation using the formula: σ = √(Σ(x - μ)²/N)
+print(f"\n=== Manual Standard Deviation Calculation ===")
 
-# 3. Add 10 to every element
-original = np.array([1, 5, 10, 15, 20])
-plus_ten = original + 10
-print(f"Original: {original}")
-print(f"Plus 10:  {plus_ten}")
+# Step by step using NumPy vectorized operations
+mean_value = even_numbers.mean()                    # μ (mu)
+print(f"Mean (μ): {mean_value}")
+
+deviations = even_numbers - mean_value              # (x - μ)
+print(f"Deviations from mean (first 5): {deviations[:5]}")
+
+squared_deviations = deviations ** 2                # (x - μ)²
+print(f"Squared deviations (first 5): {squared_deviations[:5]}")
+
+variance = squared_deviations.mean()                # Σ(x - μ)²/N
+print(f"Variance (σ²): {variance}")
+
+manual_std = np.sqrt(variance)                      # σ = √(variance)
+print(f"Manual standard deviation: {manual_std:.6f}")
+
 ```
 
 ### Key Points
@@ -558,7 +509,67 @@ list_array = np.array([1, 2, 3, 4, 5])
 matrix = np.array([[1, 2, 3], [4, 5, 6]])
 print(f"From list: {list_array}")
 print(f"2D array:\n{matrix}")
+print(f"  .shape: {list_array.shape} - Dimensions")
+print(f"  .dtype: {list_array.dtype} - Data type") 
 ```
+```python
+%pip install tifffile
+import tifffile as tiff
+
+# Read the TIFF file
+img = tiff.imread("B03.tif")
+arr = np.array(img)
+
+print("Shape:", arr.shape)
+print("Data type:", arr.dtype)
+print("Contents:\n", arr)
+```
+
+### Datatypes
+![datatype](https://numpy.org/doc/stable/_images/dtype-hierarchy.png)
+
+```python
+# Understanding NumPy data types and their characteristics
+print("=== NumPy Data Types Overview ===")
+
+# Automatic type inference
+int_array = np.array([1, 2, 3, 4])
+float_array = np.array([1.0, 2.5, 3.7])
+mixed_array = np.array([1, 2.5, 3])  # Promotes to float
+
+print(f"Automatic type inference:")
+print(f"Integer array: {int_array.dtype}")
+print(f"Float array: {float_array.dtype}")
+print(f"Mixed array: {mixed_array.dtype} (promoted to float)")
+
+# Integer types and their ranges
+print(f"\n=== Integer Data Types ===")
+integer_types = [np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64]
+
+for dtype in integer_types:
+    info = np.iinfo(dtype)
+    arr = np.array([100], dtype=dtype)
+    print(f"{dtype.__name__:<8}: range [{info.min:>20}, {info.max:>20}], size: {arr.itemsize} bytes")
+
+# Float types and their precision
+print(f"\n=== Floating Point Data Types ===")
+float_types = [np.float16, np.float32, np.float64]
+
+for dtype in float_types:
+    info = np.finfo(dtype)
+    arr = np.array([3.14159], dtype=dtype)
+    print(f"{dtype.__name__:<9}: precision: ~{info.precision} digits, range: ~1e{int(info.maxexp*0.3)}, size: {arr.itemsize} bytes")
+    print(f"            Value: {arr[0]}")
+
+# Boolean and complex types
+print(f"\n=== Other Data Types ===")
+bool_array = np.array([True, False, True], dtype=np.bool_)
+complex_array = np.array([1+2j, 3+4j], dtype=np.complex128)
+
+print(f"Boolean: {bool_array.dtype}, size: {bool_array.itemsize} byte per element")
+print(f"Complex: {complex_array.dtype}, size: {complex_array.itemsize} bytes per element")
+```
+
 
 > **INSTRUCTOR NOTES**: Start with `np.array()` since it's the most intuitive - converting existing Python data. Point out how nested lists become 2D arrays automatically. This is the gateway function that gets people started with NumPy.
 
@@ -692,48 +703,10 @@ print(f"  .itemsize: {sample_array.itemsize} - Bytes per element")
 ### Data Type Information
 
 ```python
-# Understanding NumPy data types and their characteristics
-print("=== NumPy Data Types Overview ===")
-
-# Automatic type inference
-int_array = np.array([1, 2, 3, 4])
-float_array = np.array([1.0, 2.5, 3.7])
-mixed_array = np.array([1, 2.5, 3])  # Promotes to float
-
-print(f"Automatic type inference:")
-print(f"Integer array: {int_array.dtype}")
-print(f"Float array: {float_array.dtype}")
-print(f"Mixed array: {mixed_array.dtype} (promoted to float)")
-
-# Integer types and their ranges
-print(f"\n=== Integer Data Types ===")
-integer_types = [np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64]
-
-for dtype in integer_types:
-    info = np.iinfo(dtype)
-    arr = np.array([100], dtype=dtype)
-    print(f"{dtype.__name__:<8}: range [{info.min:>20}, {info.max:>20}], size: {arr.itemsize} bytes")
-
-# Float types and their precision
-print(f"\n=== Floating Point Data Types ===")
-float_types = [np.float16, np.float32, np.float64]
-
-for dtype in float_types:
-    info = np.finfo(dtype)
-    arr = np.array([3.14159], dtype=dtype)
-    print(f"{dtype.__name__:<9}: precision: ~{info.precision} digits, range: ~1e{int(info.maxexp*0.3)}, size: {arr.itemsize} bytes")
-    print(f"            Value: {arr[0]}")
-
-# Boolean and complex types
-print(f"\n=== Other Data Types ===")
-bool_array = np.array([True, False, True], dtype=np.bool_)
-complex_array = np.array([1+2j, 3+4j], dtype=np.complex128)
-
-print(f"Boolean: {bool_array.dtype}, size: {bool_array.itemsize} byte per element")
-print(f"Complex: {complex_array.dtype}, size: {complex_array.itemsize} bytes per element")
 
 # Data type drawbacks and limitations
 print(f"\n=== Data Type Drawbacks and Limitations ===")
+import sys  # For memory size calculations
 
 # 1. Integer overflow
 print("1. Integer Overflow:")
@@ -762,9 +735,9 @@ large_data = np.ones(1_000_000)
 large_float32 = large_data.astype(np.float32)
 large_float64 = large_data.astype(np.float64)
 
-print(f"   1M elements as float32: {large_float32.nbytes / 1024**2:.1f} MB")
-print(f"   1M elements as float64: {large_float64.nbytes / 1024**2:.1f} MB")
-print(f"   Memory savings with float32: {(1 - large_float32.nbytes/large_float64.nbytes)*100:.0f}%")
+print(f"   1M elements as float32: {sys.getsizeof(large_float32) / 1024**2:.1f} MB")
+print(f"   1M elements as float64: {sys.getsizeof(large_float64) / 1024**2:.1f} MB")
+print(f"   Memory savings with float32: {(1 - sys.getsizeof(large_float32)/sys.getsizeof(large_float64))*100:.0f}%")
 
 # 4. Type casting dangers
 print(f"\n4. Dangerous Type Casting:")
@@ -813,11 +786,11 @@ print(f"\n=== Best Practices ===")
 ```python
 
 ### Exercise
-1. Create a 3×4 array filled with the value 7 using np.full, then report min, max, and mean
+1. Create a 3×4 array filled with random values, then report min, max, and mean
 2. Create a 5×5 identity matrix and modify it to have 2s on the diagonal  
 3. Use `np.linspace()` to create 50 evenly spaced points between 0 and 2π, then compute sin of each point
 4. Compare `np.arange(0, 1, 0.1)` vs `np.linspace(0, 1, 11)` - what's the difference?
-
+```
 > **INSTRUCTOR NOTES**: Give them 8-10 minutes. This exercise covers the core array creation functions and introduces some basic operations. Question 4 often reveals the arange vs linspace confusion - use this as a teaching moment.
 
 #### Answer
@@ -919,9 +892,9 @@ print(f"x[-1,-1] = {x[-1,-1]}")  # negative indices
 
 # Slicing
 print(f"\nSlicing:")
-
+```
 > **INSTRUCTOR NOTES**: Point out that negative indices work just like Python lists. The comma syntax `x[row, col]` is NumPy-specific and much cleaner than `x[row][col]`. Make sure everyone understands this notation before moving on.
-
+```python
 print(f"First row: {x[0, :]}")
 print(f"Last column: {x[:, -1]}")
 print(f"First 2 rows, last 2 columns:\n{x[:2, -2:]}")
@@ -929,9 +902,9 @@ print(f"Every other row: \n{x[::2, :]}")
 print(f"Reverse rows:\n{x[::-1, :]}")
 
 # Integer array indexing (fancy indexing)
-
+```
 > **INSTRUCTOR NOTES**: The slicing syntax is exactly like Python lists, but applied to each dimension. The `::2` step syntax and negative steps (`[::-1]`) are powerful but can confuse beginners. Spend time on the multi-dimensional slicing - this is where NumPy shines over nested lists.
-
+```python
 rows = np.array([0, 2])
 cols = np.array([1, 3])
 print(f"\nFancy indexing:")
@@ -942,9 +915,9 @@ print(f"Multiple row selection:\n{x[[0, 2], :]}")  # Select rows 0 and 2
 print(f"Multiple col selection:\n{x[:, [1, 3]]}")  # Select columns 1 and 3
 
 # Boolean indexing
-
+```
 > **INSTRUCTOR NOTES**: Fancy indexing (using arrays of indices) is powerful but can be confusing. Emphasize that `x[[0,2], :]` selects rows 0 and 2, while `x[:, [1,3]]` selects columns 1 and 3. This is different from slicing - you're picking specific rows/columns, not ranges.
-
+```python
 mask = x % 2 == 0
 print(f"\nBoolean indexing:")
 print(f"Even mask:\n{mask}")
@@ -959,9 +932,9 @@ print(f"Values > 5 and < 10: {x[(x > 5) & (x < 10)]}")
 print(f"Values <= 3 or >= 9: {x[(x <= 3) | (x >= 9)]}")
 
 # Modifying arrays through indexing
-
+```
 > **INSTRUCTOR NOTES**: Boolean indexing is one of NumPy's killer features for data analysis. Point out that `x % 2 == 0` creates a boolean array of the same shape, then `x[mask]` selects only the True elements. The `&` and `|` operators (not `and`/`or`) are essential for combining conditions. This is the foundation of data filtering in pandas.
-
+```python
 print(f"\nModifying arrays:")
 ```
 
@@ -1025,11 +998,7 @@ safe_copy[:] = -111           # Won't affect original
 - **Views:** Basic slicing `arr[start:stop]`, single elements `arr[i,j]`
 - **Copies:** Fancy indexing `arr[[0,2]]`, boolean indexing `arr[mask]`, explicit `.copy()`
 - **Check:** Use `np.shares_memory(original, result)` to verify
-
-print(f"\n" + "="*60)
-print("RULE 5: Practical patterns and gotchas")
-print("="*60)
-
+```python
 # Common gotcha: Modifying a slice unintentionally
 data = np.arange(20).reshape(4, 5)
 print(f"Original data:\n{data}")
@@ -1047,19 +1016,17 @@ subset_safe += 1000                 # Only modifies the copy
 print(f"After modifying subset_safe copy, original data:\n{data}")
 print("✅ Safe! Used .copy() to protect original.")
 
-print(f"\n" + "="*60)
-print("MEMORY AND PERFORMANCE IMPLICATIONS")
-print("="*60)
+import sys  # For memory size calculations
 
 # Memory comparison
 large_array = np.random.rand(1000, 1000)
 slice_view = large_array[::10, ::10]    # View - no new memory
 slice_copy = large_array[::10, ::10].copy()  # Copy - new memory
 
-print(f"Original array: {large_array.nbytes / 1024**2:.1f} MB")
-print(f"Slice view: {slice_view.nbytes / 1024**2:.1f} MB (shares memory)")
-print(f"Slice copy: {slice_copy.nbytes / 1024**2:.1f} MB (independent memory)")
-print(f"Memory overhead for copy: {slice_copy.nbytes / 1024**2:.1f} MB")
+print(f"Original array: {sys.getsizeof(large_array) / 1024**2:.1f} MB")
+print(f"Slice view: {sys.getsizeof(slice_view) / 1024**2:.1f} MB (shares memory)")
+print(f"Slice copy: {sys.getsizeof(slice_copy) / 1024**2:.1f} MB (independent memory)")
+print(f"Memory overhead for copy: {sys.getsizeof(slice_copy) / 1024**2:.1f} MB")
 
 print(f"\n" + "="*60)
 print("QUICK REFERENCE: View vs Copy Rules")
@@ -1107,7 +1074,7 @@ view[:] = 999
 print("After modifying copy and view:")
 print(f"Original x:\n{x}")
 print(f"Copy (independent):\n{cp}")
-
+```
 ### Advanced Indexing Patterns
 
 > **INSTRUCTOR NOTES**: The gradebook example makes indexing practical and relatable. Students can see immediate applications to real data analysis. Point out how these patterns apply to any tabular data - sales, measurements, survey responses. The "gotchas" section prevents common bugs that plague beginners.
@@ -1123,10 +1090,9 @@ grades = np.array([
     [76, 82, 80, 84]   # Student 4
 ])
 subjects = ['Math', 'Science', 'English', 'History']
-```
+
 
 #### Pattern 1: Multi-Condition Selection
-```python
 # Students with ALL grades ≥ 80
 good_students = np.all(grades >= 80, axis=1)
 good_grades = grades[good_students, :]
@@ -1136,20 +1102,20 @@ math_stars = grades[:, 0] > 90
 high_achievers = np.mean(grades, axis=1) > 87
 special = math_stars | high_achievers
 special_students = grades[special, :]
-```
+
 
 #### Pattern 2: Conditional Replacement
-```python
+
 # Add 5 bonus points to grades < 80
 grades_bonus = grades.copy()
 grades_bonus[grades_bonus < 80] += 5
 
 # Cap maximum at 95
 grades_bonus[grades_bonus > 95] = 95
-```
+
 
 #### Pattern 3: Finding Positions
-```python
+
 # Find highest grade position
 max_pos = np.unravel_index(np.argmax(grades), grades.shape)
 print(f"Highest grade at student {max_pos[0]}, subject {max_pos[1]}")
@@ -1163,12 +1129,16 @@ positions_91 = np.where(grades == 91)
 # ❌ WRONG: Accidentally modifying original
 subset = grades[:2, :]  # This is a view!
 subset += 10           # Modifies original grades!
+```
 
-# ✅ RIGHT: Safe modification
+#### ✅ RIGHT: Safe modification
+```python
 subset_safe = grades[:2, :].copy()  # Explicit copy
 subset_safe += 10                   # Only modifies copy
+```
 
-# ✅ RIGHT: Direct assignment
+#### ✅ RIGHT: Direct assignment
+```python
 grades_modified = grades.copy()
 grades_modified[:2, :] += 10       # Clear intent
 ```
@@ -1179,21 +1149,25 @@ grades_modified[:2, :] += 10       # Clear intent
 - **Conditions:** Use `&`, `|` (not `and`, `or`), add parentheses: `(a > 5) & (b < 10)`
 - **Debugging:** Check with `np.shares_memory()` when unsure
 
-# Advanced indexing patterns
+#### Advanced indexing patterns
+```python
 x = np.arange(24).reshape(4, 6)
 print(f"\nAdvanced patterns on 4x6 array:")
 print(f"Original:\n{x}")
-
-# Diagonal elements
+```
+#### Diagonal elements
+```python
 diag_indices = np.arange(min(x.shape))
 print(f"Diagonal: {x[diag_indices, diag_indices]}")
-
-# Block selection
+```
+#### Block selection
+```python
 print(f"2x2 blocks (top-left and bottom-right):")
 print(f"Top-left 2x2:\n{x[:2, :2]}")
 print(f"Bottom-right 2x2:\n{x[-2:, -2:]}")
-
-# Conditional replacement
+```
+#### Conditional replacement
+```python
 x_copy = x.copy()
 x_copy[x_copy > 15] = -1
 print(f"Replace values > 15 with -1:\n{x_copy}")
@@ -1340,7 +1314,6 @@ print(f"Performance comparison on 1M elements:")
 # Time comparison (conceptual - actual timing would vary)
 # Python sum: ~100ms, NumPy sum: ~500μs (200x faster)
 print(f"Sum result: {np.sum(big_array):.4f}")
-print(f"NumPy sum is ~200x faster than Python's built-in sum()")
 
 # Comprehensive aggregation table (following VanderPlas Table 2-3)
 print(f"\nComprehensive aggregations on random data (n=1000):")
@@ -1926,10 +1899,6 @@ print(f"\nStore A-Jan, Store B-Mar, Store C-Apr: {specific_data}")
 **Reshape changes array dimensions while keeping the same data.** Use it to reorganize data for different analysis perspectives.
 
 ```python
-# Quick example: reshape() changes dimensions, not data
-data = np.arange(6)        # [0, 1, 2, 3, 4, 5]
-matrix = data.reshape(2, 3) # [[0, 1, 2], [3, 4, 5]]
-
 print("\n=== Reshaping for Different Analysis ===")
 
 # Example: Daily temperature data for a week
@@ -2097,6 +2066,9 @@ After completing this episode, learners will be able to:
 - Understand memory layout and its impact on performance
 - Complete a mini-project using NumPy skills learned throughout the workshop
 
+![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Row_and_column_major_order.svg/250px-Row_and_column_major_order.svg.png)
+
+
 **Hands‑On Code**  
 ```python
 import numpy as np
@@ -2148,6 +2120,87 @@ print(f"\n=== Why Order Matters for Performance ===")
 print("C-order (row-major): Better for row operations")
 print("F-order (column-major): Better for column operations")
 print("Choose order based on your data access patterns!")
+
+print(f"\n=== Structured Data: Beyond Simple Arrays ===")
+
+# Creating structured arrays for heterogeneous data
+print(f"\n1. Basic Structured Arrays")
+print("Useful when you need different data types in one array")
+
+# Define a structured data type
+student_dtype = np.dtype([
+    ('name', 'U10'),        # Unicode string, max 10 chars
+    ('age', 'i4'),          # 32-bit integer
+    ('gpa', 'f8'),          # 64-bit float
+    ('graduated', '?')      # Boolean
+])
+
+# Create structured array
+students = np.array([
+    ('Alice', 22, 3.8, True),
+    ('Bob', 21, 3.2, False),
+    ('Charlie', 23, 3.9, True),
+    ('Diana', 20, 3.5, False)
+], dtype=student_dtype)
+
+print(f"Structured array:\n{students}")
+print(f"Data type: {students.dtype}")
+
+# Accessing fields like a database
+print(f"\n2. Field Access (Like Database Columns)")
+print(f"All names: {students['name']}")
+print(f"All GPAs: {students['gpa']}")
+print(f"Students who graduated: {students[students['graduated']]['name']}")
+
+# Advanced structured arrays
+print(f"\n3. Advanced Features")
+# Compound operations
+high_achievers = students[(students['gpa'] > 3.7) & (students['age'] > 21)]
+print(f"High achievers over 21:\n{high_achievers}")
+
+# Statistics on fields
+print(f"Average GPA: {students['gpa'].mean():.2f}")
+print(f"Age range: {students['age'].min()} - {students['age'].max()}")
+
+# Record arrays (more convenient access)
+print(f"\n4. Record Arrays (Attribute-Style Access)")
+student_records = students.view(np.recarray)
+print(f"Access with dot notation:")
+print(f"First student name: {student_records.name[0]}")
+print(f"All GPAs: {student_records.gpa}")
+
+# Creating from dictionaries (practical approach)
+print(f"\n5. Creating from Real Data")
+# Simulating data that might come from CSV or database
+data_dict = {
+    'timestamp': ['2024-01-01', '2024-01-02', '2024-01-03'],
+    'temperature': [23.5, 25.1, 22.8],
+    'humidity': [65, 70, 68],
+    'sensor_id': [1, 1, 2]
+}
+
+# Convert to structured array
+sensor_dtype = np.dtype([
+    ('timestamp', 'U10'),
+    ('temperature', 'f4'),
+    ('humidity', 'i2'),
+    ('sensor_id', 'i2')
+])
+
+sensor_data = np.array(list(zip(*data_dict.values())), dtype=sensor_dtype)
+print(f"Sensor data:\n{sensor_data}")
+
+# Why use structured arrays?
+print(f"\n=== When to Use Structured Arrays ===")
+print("✓ Mixed data types in single array")
+print("✓ Memory efficiency vs separate arrays")
+print("✓ Database-like operations")
+print("✓ Reading structured file formats")
+print("✗ Performance overhead vs homogeneous arrays")
+print("✗ Limited mathematical operations")
+print("Note: For most data analysis, prefer pandas DataFrames")
+
+
 
 # Mini-project: Data analysis pipeline
 print(f"\n=== Mini-Project: Weather Data Analysis ===")
