@@ -1,0 +1,34 @@
+# Large geospatial data files
+*.tif
+*.tiff
+*.TIF
+*.TIFF
+
+# Common large data formats
+*.hdf5
+*.h5
+*.nc
+*.netcdf
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
