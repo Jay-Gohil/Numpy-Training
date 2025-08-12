@@ -499,6 +499,25 @@ After completing this episode, learners will be able to:
 
 > **INSTRUCTOR NOTES**: The learning objectives cover the essential skills for array creation. Emphasize that choosing the right creation method depends on your use case - sometimes you have data (use np.array), sometimes you need initialized arrays (zeros/ones), sometimes you need sequences (arange/linspace).
 
+### There are **6** general mechanisms for creating arrays:
+
+1. **Conversion from other Python structures**  
+   (e.g., lists and tuples)
+
+2. **Intrinsic NumPy array creation functions**  
+   (e.g., `arange`, `ones`, `zeros`, etc.)
+
+3. **Replicating, joining, or mutating existing arrays**
+
+4. **Reading arrays from disk**  
+   (either from standard or custom formats)
+
+5. **Creating arrays from raw bytes**  
+   (through the use of strings or buffers)
+
+6. **Use of special library functions**  
+   (e.g., `random`)
+
 ### Basic Array Creation Functions
 
 ```python
