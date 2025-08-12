@@ -395,7 +395,7 @@ print(f"NumPy array: {np_time:.4f}s")
 print(f"NumPy is {py_time/np_time:.1f}x faster")
 ```
 > **INSTRUCTOR NOTES**: The performance difference is usually dramatic - often 10-100x faster! Explain that NumPy's speed comes from C implementations under the hood. For small arrays the difference matters less, but for real data work it's transformative.
-```python
+
 
 ### When Should You Use NumPy?
 
@@ -727,17 +727,6 @@ float64_value = np.array([precise_value], dtype=np.float64)
 print(f"   Original π: {precise_value}")
 print(f"   float32 π:  {float32_value[0]}")
 print(f"   float64 π:  {float64_value[0]}")
-print(f"   Precision lost in float32: {abs(precise_value - float32_value[0]):.2e}")
-
-# 3. Memory vs precision trade-offs
-print(f"\n3. Memory vs Precision Trade-offs:")
-large_data = np.ones(1_000_000)
-large_float32 = large_data.astype(np.float32)
-large_float64 = large_data.astype(np.float64)
-
-print(f"   1M elements as float32: {sys.getsizeof(large_float32) / 1024**2:.1f} MB")
-print(f"   1M elements as float64: {sys.getsizeof(large_float64) / 1024**2:.1f} MB")
-print(f"   Memory savings with float32: {(1 - sys.getsizeof(large_float32)/sys.getsizeof(large_float64))*100:.0f}%")
 
 # 4. Type casting dangers
 print(f"\n4. Dangerous Type Casting:")
@@ -998,6 +987,7 @@ safe_copy[:] = -111           # Won't affect original
 - **Views:** Basic slicing `arr[start:stop]`, single elements `arr[i,j]`
 - **Copies:** Fancy indexing `arr[[0,2]]`, boolean indexing `arr[mask]`, explicit `.copy()`
 - **Check:** Use `np.shares_memory(original, result)` to verify
+
 ```python
 # Common gotcha: Modifying a slice unintentionally
 data = np.arange(20).reshape(4, 5)
@@ -1015,18 +1005,6 @@ subset_safe = data[1:3, :].copy()  # Safe copy
 subset_safe += 1000                 # Only modifies the copy
 print(f"After modifying subset_safe copy, original data:\n{data}")
 print("✅ Safe! Used .copy() to protect original.")
-
-import sys  # For memory size calculations
-
-# Memory comparison
-large_array = np.random.rand(1000, 1000)
-slice_view = large_array[::10, ::10]    # View - no new memory
-slice_copy = large_array[::10, ::10].copy()  # Copy - new memory
-
-print(f"Original array: {sys.getsizeof(large_array) / 1024**2:.1f} MB")
-print(f"Slice view: {sys.getsizeof(slice_view) / 1024**2:.1f} MB (shares memory)")
-print(f"Slice copy: {sys.getsizeof(slice_copy) / 1024**2:.1f} MB (independent memory)")
-print(f"Memory overhead for copy: {sys.getsizeof(slice_copy) / 1024**2:.1f} MB")
 
 print(f"\n" + "="*60)
 print("QUICK REFERENCE: View vs Copy Rules")
@@ -1115,10 +1093,6 @@ grades_bonus[grades_bonus > 95] = 95
 
 
 #### Pattern 3: Finding Positions
-
-# Find highest grade position
-max_pos = np.unravel_index(np.argmax(grades), grades.shape)
-print(f"Highest grade at student {max_pos[0]}, subject {max_pos[1]}")
 
 # Find all positions with specific grade
 positions_91 = np.where(grades == 91)
