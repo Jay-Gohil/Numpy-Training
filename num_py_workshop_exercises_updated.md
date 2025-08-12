@@ -1,10 +1,16 @@
 # NumPy Workshop: Hands-On Code, Exercises & Answers
 
+> **INSTRUCTOR NOTES**: Welcome participants, do a quick round of introductions. Ask about their Python experience and what they hope to achieve with NumPy. Set expectations: this is hands-on, encourage questions, and emphasize that we'll progress from basics to practical applications.
+
 ## Overview
 
 This workshop provides a comprehensive introduction to NumPy, the fundamental package for numerical computing in Python. Through hands-on coding exercises, you'll learn to work with arrays, perform vectorized operations, and apply NumPy to real-world data analysis problems.
 
+> **INSTRUCTOR NOTES**: Emphasize that NumPy is the foundation of the entire scientific Python ecosystem. Mention that concepts learned here will transfer to pandas, scikit-learn, matplotlib, etc. Set the tone that this is practical, not theoretical.
+
 *Examples and exercises are adapted from Jake VanderPlas's **Python Data Science Handbook** (Ch. 2: Introduction to NumPy), available at https://jakevdp.github.io/PythonDataScienceHandbook/*
+
+> **INSTRUCTOR NOTES**: Credit Jake VanderPlas and encourage participants to explore the book for deeper learning. This adds credibility and provides a path for continued learning.
 
 ## Prerequisites
 
@@ -12,7 +18,11 @@ This workshop provides a comprehensive introduction to NumPy, the fundamental pa
 - Familiarity with Python lists and basic data types
 - A Python environment (Jupyter, IPython, or Python interpreter)
 
+> **INSTRUCTOR NOTES**: Quickly check if anyone needs help with setup. Have a backup plan for participants with environment issues. Consider having them pair with someone or use a cloud environment like Google Colab.
+
 ## Workshop Schedule
+
+> **INSTRUCTOR NOTES**: Walk through the schedule, emphasizing the progression from basic concepts to practical applications. Point out break times and mention that timing is flexible based on group pace. The mini-project at the end ties everything together.
 
 | Time | Topic | Duration   |
 |------|-------|----------|
@@ -29,6 +39,8 @@ This workshop provides a comprehensive introduction to NumPy, the fundamental pa
 | 16:50 - 17:00 | Wrap-up | 10 min |
 
 ## How to Use This Document
+
+> **INSTRUCTOR NOTES**: Explain the structure of each section. Emphasize that Questions help focus learning, Objectives set clear goals, Hands-On Code should be run together, Exercises are for practice, and Key Points summarize takeaways. Encourage participants to take notes on insights and questions.
 
 Each section contains:
 - **Questions**: Key learning questions to guide your understanding
@@ -52,9 +64,13 @@ Each section contains:
 
 ## 0. Welcome and icebreaker (09:00–09:15)
 
+> **INSTRUCTOR NOTES**: Start by checking if everyone can access their Python environment. This is crucial - don't proceed if people can't run code. Use this time to build rapport and assess the group's experience level. Adjust your pace and depth based on their responses.
+
 ### Questions
 - Is my Python environment properly configured for NumPy?
 - How do I verify my NumPy installation and version?
+
+> **INSTRUCTOR NOTES**: Have participants run this code together. It's a great way to ensure everyone's environment works and sets the collaborative tone. If someone has issues, pair them with a neighbor or provide alternative solutions (Google Colab, etc.).
 
 ### Objectives
 After completing this setup, learners will be able to:
@@ -62,12 +78,16 @@ After completing this setup, learners will be able to:
 - Import NumPy with the standard convention
 - Run basic array operations to confirm the environment works
 
+> **INSTRUCTOR NOTES**: Emphasize the `import numpy as np` convention - this is universal in the scientific Python community. Mention that version differences rarely matter for this workshop, but good to know what they're working with.
+
 **Hands‑On Code**  
 ```python
 import sys, numpy as np
 print("Python version:", sys.version.split()[0])
 print("NumPy version:", np.__version__)
 ```
+
+> **INSTRUCTOR NOTES**: Walk around and check everyone's output. Typical versions should be Python 3.7+ and NumPy 1.19+. If someone has much older versions, warn them there might be minor differences but most content will work.
 
 **Exercise**  
 Run the code above. Confirm that you’re running Python 3.6+ and NumPy 1.15+ (or the latest installed), and that the test array prints correctly.  
@@ -79,19 +99,27 @@ NumPy version: 2.3.1
 ```  
 Participants should see their local versions, confirming a valid environment.
 
+> **INSTRUCTOR NOTES**: Point out that their versions may differ, and that's fine. Use this opportunity to transition into why NumPy is so important in the Python ecosystem.
+
 ### Key Points
 - Use `import numpy as np` as the standard NumPy import convention
 - Verify your environment with version checks before starting numerical work
 - NumPy arrays are the foundation for all scientific Python computing
 
+> **INSTRUCTOR NOTES**: These key points set up the next section perfectly. Emphasize that NumPy is the foundation - pandas DataFrames are built on NumPy arrays, scikit-learn uses NumPy arrays, etc. This motivates the entire workshop.
+
 ---
 
 ## 1. Why Numpy? (09:15–09:45)
+
+> **INSTRUCTOR NOTES**: This is a crucial section that motivates the entire workshop. Many beginners wonder "why not just use Python lists?" Take time with the comparisons - they're eye-opening. Be prepared for questions about when to use each data structure.
 
 ### Questions
 - Why should I use NumPy instead of Python lists?
 - How much faster is NumPy for numerical computations?
 - What makes NumPy arrays more memory efficient?
+
+> **INSTRUCTOR NOTES**: Ask participants if they've worked with large datasets in pure Python. Many will have experienced slow performance or memory issues. Use this to create engagement - NumPy solves real problems they've likely encountered.
 
 ### Objectives
 After completing this episode, learners will be able to:
@@ -99,6 +127,8 @@ After completing this episode, learners will be able to:
 - Explain the memory advantages of NumPy arrays  
 - Demonstrate vectorized operations vs explicit loops
 - Import NumPy using the standard convention
+
+> **INSTRUCTOR NOTES**: Emphasize that understanding these differences is fundamental to making good design choices. After this section, they should never wonder "why NumPy?" again.
 
 ### What is NumPy?
 
@@ -115,6 +145,230 @@ print(f"Type: {type(my_array)}")
 
 NumPy arrays are different from Python lists - they store elements of the same type and enable mathematical operations on entire datasets.
 
+> **INSTRUCTOR NOTES**: Have everyone run this code first. Point out that `np.array()` is the most common way to create arrays. The type `numpy.ndarray` (n-dimensional array) is what makes everything else possible.
+
+### NumPy ndarray vs Python Lists: Key Differences
+
+Understanding the fundamental differences between NumPy arrays and Python lists is crucial for beginners. Let's explore this with common operations:
+
+> **INSTRUCTOR NOTES**: This comparison section is the heart of the motivation. Take your time here - these examples are designed to be surprising and enlightening. Make sure everyone understands each operation before moving on.
+
+#### Addition Operations
+
+```python
+print("=== Addition: Element-wise vs List Concatenation ===")
+
+# Python lists: + means concatenation
+python_list1 = [1, 2, 3]
+python_list2 = [4, 5, 6]
+list_addition = python_list1 + python_list2
+print(f"Python lists: {python_list1} + {python_list2} = {list_addition}")
+print("  Result: Lists are concatenated (joined together)")
+
+# NumPy arrays: + means element-wise addition
+numpy_array1 = np.array([1, 2, 3])
+numpy_array2 = np.array([4, 5, 6])
+array_addition = numpy_array1 + numpy_array2
+print(f"NumPy arrays: {numpy_array1} + {numpy_array2} = {array_addition}")
+print("  Result: Corresponding elements are added together")
+
+# Adding a number to each element
+print(f"\nAdding 10 to each element:")
+try:
+    list_plus_number = python_list1 + 10  # This will fail!
+except TypeError as e:
+    print(f"Python list + 10: Error - {e}")
+
+array_plus_number = numpy_array1 + 10  # This works!
+print(f"NumPy array + 10: {numpy_array1} + 10 = {array_plus_number}")
+```
+
+> **INSTRUCTOR NOTES**: This example often gets "aha!" moments. Python list + number fails because lists don't know how to add numbers to each element. NumPy arrays treat this as "broadcast this operation to every element" - a powerful concept we'll explore more later.
+
+#### Multiplication Operations
+
+```python
+print(f"\n=== Multiplication: Repetition vs Element-wise ===")
+
+# Python lists: * means repetition
+list_multiplication = python_list1 * 3
+print(f"Python list * 3: {python_list1} * 3 = {list_multiplication}")
+print("  Result: List is repeated 3 times")
+
+# NumPy arrays: * means element-wise multiplication
+array_multiplication = numpy_array1 * 3
+print(f"NumPy array * 3: {numpy_array1} * 3 = {array_multiplication}")
+print("  Result: Each element is multiplied by 3")
+
+# Multiplying two sequences element-wise
+print(f"\nElement-wise multiplication:")
+try:
+    list_element_mult = python_list1 * python_list2  # This doesn't work as expected
+    print(f"Python lists: Can't multiply element-wise directly")
+except TypeError as e:
+    print(f"Python lists: {e}")
+
+array_element_mult = numpy_array1 * numpy_array2
+print(f"NumPy arrays: {numpy_array1} * {numpy_array2} = {array_element_mult}")
+print("  Result: Corresponding elements are multiplied")
+```
+
+> **INSTRUCTOR NOTES**: Point out how Python's * operator is overloaded differently for lists vs arrays. With lists it means "repeat", with NumPy it means "element-wise multiply". This is a common source of confusion for beginners coming from pure Python.
+
+#### Mathematical Functions
+
+```python
+print(f"\n=== Mathematical Functions ===")
+
+# Python lists: Need loops or list comprehensions
+import math
+python_squares = [x**2 for x in python_list1]  # Manual computation
+python_sqrt = [math.sqrt(x) for x in python_list1]  # Manual computation
+print(f"Python list squares: [x**2 for x in {python_list1}] = {python_squares}")
+print(f"Python list sqrt: [math.sqrt(x) for x in {python_list1}] = {python_sqrt}")
+print("  Result: Requires loops or comprehensions")
+
+# NumPy arrays: Built-in vectorized functions
+numpy_squares = numpy_array1 ** 2  # Vectorized operation
+numpy_sqrt = np.sqrt(numpy_array1)  # Vectorized function
+print(f"NumPy array squares: {numpy_array1} ** 2 = {numpy_squares}")
+print(f"NumPy array sqrt: np.sqrt({numpy_array1}) = {numpy_sqrt}")
+print("  Result: Direct vectorized operations")
+```
+
+> **INSTRUCTOR NOTES**: Show how NumPy's approach eliminates loops entirely. The `**` operator and `np.sqrt()` apply to every element automatically. This is called "vectorization" - a core NumPy concept.
+
+#### Memory and Performance
+
+```python
+print(f"\n=== Memory and Performance Differences ===")
+
+# Create larger datasets for comparison
+large_list = list(range(1000))
+large_array = np.arange(1000)
+
+# Memory usage
+import sys
+list_memory = sys.getsizeof(large_list) + sum(sys.getsizeof(x) for x in large_list)
+array_memory = large_array.nbytes
+
+print(f"Memory usage for 1000 integers:")
+print(f"  Python list: ~{list_memory} bytes")
+print(f"  NumPy array: {array_memory} bytes")
+print(f"  NumPy uses ~{list_memory // array_memory}x less memory")
+
+# Type homogeneity
+mixed_list = [1, 2.5, "hello", True]  # Python allows mixed types
+print(f"\nType flexibility:")
+print(f"Python list: {mixed_list} (mixed types allowed)")
+numpy_array_mixed = np.array([1, 2.5, 3, 4])  # NumPy promotes to common type
+print(f"NumPy array: {numpy_array_mixed} (all converted to {numpy_array_mixed.dtype})")
+```
+
+> **INSTRUCTOR NOTES**: The memory comparison is usually shocking - NumPy can use 10x less memory! Also note how NumPy promotes mixed types to a common type (type promotion), while Python lists keep the original types.
+
+#### Summary of Key Differences
+
+**Python Lists:**
+- ✓ Mixed data types (numbers, strings, objects)
+- ✓ Dynamic sizing (append, insert, remove)
+- ✓ General-purpose data structure
+- ✗ No built-in mathematical operations
+- ✗ Slower for numerical computations
+- ✗ More memory overhead
+
+**NumPy Arrays:**
+- ✓ Fast mathematical operations
+- ✓ Memory efficient
+- ✓ Vectorized computations
+- ✓ Built-in mathematical functions
+- ✗ Fixed data type (homogeneous)
+- ✗ Fixed size (less dynamic)
+
+**When to Choose:**
+- **Use Python Lists** for mixed data types, dynamic collections, and general programming tasks
+- **Use NumPy Arrays** for numerical computations, scientific computing, and performance-critical operations
+
+> **INSTRUCTOR NOTES**: Emphasize that both data structures have their place. Don't present this as "NumPy is always better" - each has optimal use cases. Lists are still the right choice for many programming tasks.
+
+### Python Array Module vs NumPy Arrays
+
+Python also has a built-in `array` module that sits between lists and NumPy arrays. Here's how they compare:
+
+```python
+import array
+import numpy as np
+
+# Creating arrays with different approaches
+python_array = array.array('i', [1, 2, 3, 4, 5])  # 'i' = signed integer
+numpy_array = np.array([1, 2, 3, 4, 5])
+
+print("=== Python Array vs NumPy Array ===")
+print(f"Python array: {python_array}")
+print(f"NumPy array:  {numpy_array}")
+```
+
+**Key Differences:**
+
+| Feature | Python `array` | NumPy `ndarray` |
+|---------|----------------|-----------------|
+| **Dimensions** | 1D only | Multidimensional |
+| **Math Operations** | Limited | Full vectorized support |
+| **Memory** | More efficient than lists | Most efficient |
+| **Dependencies** | Built-in Python | Requires NumPy library |
+| **Type Control** | Manual type codes ('i', 'f', 'd') | Automatic type inference |
+| **Performance** | Moderate | Fastest for numerical work |
+| **Ecosystem** | Minimal | Huge scientific ecosystem |
+
+```python
+# Demonstrating the differences
+print(f"\n=== Capabilities Comparison ===")
+
+# Mathematical operations
+try:
+    # Python array: limited math support
+    array_doubled = array.array('i', [x * 2 for x in python_array])  # Manual
+    print(f"Python array * 2: {array_doubled} (manual operation)")
+except:
+    print("Python array: Limited mathematical operations")
+
+# NumPy array: vectorized operations
+numpy_doubled = numpy_array * 2  # Automatic vectorization
+print(f"NumPy array * 2:  {numpy_doubled} (vectorized operation)")
+
+# Memory efficiency comparison
+import sys
+print(f"\nMemory usage for 1000 integers:")
+large_python_array = array.array('i', range(1000))
+large_numpy_array = np.arange(1000, dtype=np.int32)
+
+print(f"Python array: {sys.getsizeof(large_python_array)} bytes")
+print(f"NumPy array:  {large_numpy_array.nbytes} bytes")
+
+# Multidimensional capability
+print(f"\nMultidimensional support:")
+print("Python array: 1D only")
+numpy_2d = np.array([[1, 2, 3], [4, 5, 6]])
+print(f"NumPy array: Can be multidimensional\n{numpy_2d}")
+```
+
+> **INSTRUCTOR NOTES**: Most beginners don't know about Python's built-in array module. This comparison helps complete their understanding of the data structure landscape. Focus on the key point: array module is a middle ground, but NumPy's ecosystem makes it the clear choice for data work.
+
+**When to Use Python's `array` Module:**
+- Simple 1D numeric data without NumPy dependency
+- Memory efficiency more important than functionality
+- Interfacing with C libraries requiring specific data layouts
+- Binary data processing with strict type control
+
+**When to Use NumPy Arrays:**
+- Scientific computing and data analysis
+- Mathematical operations on arrays
+- Multidimensional data (matrices, tensors)
+- Performance-critical numerical computations
+- Integration with scientific Python ecosystem
+
+
+
 ### Basic Array Operations
 
 ```python
@@ -128,6 +382,8 @@ print(f"Doubled: {doubled}")
 result = numbers + 10
 print(f"Added 10: {result}")
 ```
+
+> **INSTRUCTOR NOTES**: This reinforces the core concept - operations apply to every element automatically. No loops needed! This is the foundation that makes NumPy powerful.
 
 ### Why is NumPy Faster?
 
@@ -188,6 +444,8 @@ print(f"Python list: {py_time:.4f}s")
 print(f"NumPy array: {np_time:.4f}s")
 print(f"NumPy is {py_time/np_time:.1f}x faster")
 
+> **INSTRUCTOR NOTES**: The performance difference is usually dramatic - often 10-100x faster! Explain that NumPy's speed comes from C implementations under the hood. For small arrays the difference matters less, but for real data work it's transformative.
+
 # 3. Memory efficiency
 # np. arange: Return evenly spaced values within a given interval
 numbers = np.arange(1000)
@@ -224,10 +482,14 @@ print(f"Total sales per store: {sales_data.sum(axis=1)}")
 print(f"Total sales per month: {sales_data.sum(axis=0)}")
 ```
 
+> **INSTRUCTOR NOTES**: These examples show NumPy's practical value. Point out how `.mean()`, `.max()`, and `.sum()` are built-in methods that would require manual loops in pure Python. The sales_data example previews multidimensional arrays and the axis parameter.
+
 ### Exercise
 1. Create a NumPy array with numbers 1 to 10, then multiply all numbers by 3
 2. Compare how you would calculate the average of 5 test scores using Python lists vs NumPy
 3. Try using NumPy to add 10 to every element in an array
+
+> **INSTRUCTOR NOTES**: Give them 5-7 minutes for this. Walk around and help. These exercises reinforce the key concepts: array creation, vectorized operations, and built-in functions. Most students should be able to complete this successfully.
 
 #### Answer
 
@@ -264,14 +526,20 @@ print(f"Plus 10:  {plus_ten}")
 - NumPy operations are implemented in C, providing near-native performance
 - Use `import numpy as np` as the standard convention
 
+> **INSTRUCTOR NOTES**: End this section by asking if there are questions about when to use NumPy vs lists. This is a common point of confusion. Remind them that understanding these trade-offs will guide their design decisions throughout their careers in data science/scientific computing.
+
 ---
 
 ## 2. Creating ndarrays (09:45–10:30)
+
+> **INSTRUCTOR NOTES**: This section moves from "why NumPy" to "how to use NumPy". Focus on the most common array creation methods first. Students often get overwhelmed by all the options, so emphasize np.array(), np.zeros(), np.ones(), and np.arange() as the core methods.
 
 ### Questions
 - How do I create NumPy arrays with different initialization patterns?
 - What's the difference between np.zeros, np.ones, np.empty, and np.full?
 - How do I inspect array properties like shape, dtype, and memory usage?
+
+> **INSTRUCTOR NOTES**: These questions address the most common beginner needs. Many students come from MATLAB or other environments and expect similar functions - reassure them that NumPy has all the standard array creation tools.
 
 ### Objectives
 After completing this episode, learners will be able to:
@@ -279,6 +547,8 @@ After completing this episode, learners will be able to:
 - Explain the differences between different array initialization methods
 - Inspect array attributes and understand their memory implications
 - Choose the appropriate creation method for different use cases
+
+> **INSTRUCTOR NOTES**: The learning objectives cover the essential skills for array creation. Emphasize that choosing the right creation method depends on your use case - sometimes you have data (use np.array), sometimes you need initialized arrays (zeros/ones), sometimes you need sequences (arange/linspace).
 
 ### Basic Array Creation Functions
 
@@ -291,6 +561,8 @@ matrix = np.array([[1, 2, 3], [4, 5, 6]])
 print(f"From list: {list_array}")
 print(f"2D array:\n{matrix}")
 ```
+
+> **INSTRUCTOR NOTES**: Start with `np.array()` since it's the most intuitive - converting existing Python data. Point out how nested lists become 2D arrays automatically. This is the gateway function that gets people started with NumPy.
 
 ### Arrays with Specific Values
 
@@ -321,6 +593,8 @@ print(f"\nnp.full() - Creates arrays filled with any value")
 print(f"  Filled with 7:\n{full_sevens}")
 print(f"  Filled with π: {full_pi}")
 ```
+
+> **INSTRUCTOR NOTES**: zeros() and ones() are workhorses for initialization. Emphasize the shape parameter - single number for 1D, tuple for multidimensional. The dtype parameter is crucial - many beginners forget this and get float64 when they wanted integers. full() is less common but shows the pattern.
 
 ### Sequence Generation
 
@@ -370,6 +644,8 @@ print(f"  Values: {values}")
 print(f"  Step size: {step}")
 ```
 
+> **INSTRUCTOR NOTES**: arange vs linspace is a common source of confusion. Emphasize: arange is like Python's range (specify step), linspace is for when you know how many points you want. Show them the practical difference - arange might not include the endpoint due to floating point precision, linspace always includes it (unless endpoint=False).
+
 ### Special Arrays
 
 ```python
@@ -394,6 +670,8 @@ print(f"  Random integers (1-9):\n{random_integers}")
 print(f"  Random choices: {random_choice}")
 ```
 
+> **INSTRUCTOR NOTES**: Emphasize the modern random API (default_rng) vs legacy numpy.random functions. The seeded generator ensures reproducible results for teaching. Identity matrices (np.eye) are essential for linear algebra. Show how random arrays are useful for testing and simulation.
+
 ### Array Inspection
 
 ```python
@@ -410,6 +688,8 @@ print(f"  .size: {sample_array.size} - Total elements")
 print(f"  .nbytes: {sample_array.nbytes} - Total bytes")
 print(f"  .itemsize: {sample_array.itemsize} - Bytes per element")
 ```
+
+> **INSTRUCTOR NOTES**: Array inspection is crucial for debugging and understanding performance. Point out that shape tells you dimensions, size tells you total elements, and nbytes shows memory usage. These attributes are essential for working with large datasets.
 
 ### Data Type Information
 
@@ -504,6 +784,8 @@ print(f"   Default float: {np.array([1.0]).dtype} (usually float64)")
 print(f"\n=== Best Practices ===")
 ```
 
+> **INSTRUCTOR NOTES**: The data types section is crucial but can be overwhelming. Focus on practical implications: int8/16 can overflow, float32 saves memory but loses precision, uint types can't be negative. Many students haven't thought about these trade-offs before. Emphasize that NumPy forces you to be explicit about these choices.
+
 ### Best Practices for NumPy Data Types
 
 **Do's:**
@@ -537,6 +819,8 @@ print(f"\n=== Best Practices ===")
 2. Create a 5×5 identity matrix and modify it to have 2s on the diagonal  
 3. Use `np.linspace()` to create 50 evenly spaced points between 0 and 2π, then compute sin of each point
 4. Compare `np.arange(0, 1, 0.1)` vs `np.linspace(0, 1, 11)` - what's the difference?
+
+> **INSTRUCTOR NOTES**: Give them 8-10 minutes. This exercise covers the core array creation functions and introduces some basic operations. Question 4 often reveals the arange vs linspace confusion - use this as a teaching moment.
 
 #### Answer
 
@@ -589,12 +873,18 @@ print(f"- arange gives 10 points, linspace gives exactly 11 points")
 - Array properties: `.shape`, `.dtype`, `.ndim`, `.size`, `.nbytes`, `.itemsize`
 - Choose appropriate data types to minimize memory usage
 
+> **INSTRUCTOR NOTES**: Wrap up by emphasizing that array creation is foundational - getting the right shape and dtype at creation saves time later. Preview that next we'll learn how to access and modify array elements through indexing.
+
 ## 3. Indexing, slicing and views (10:45–12:15)
+
+> **INSTRUCTOR NOTES**: Indexing is where many students get confused, especially coming from Python lists. Take time with multidimensional indexing and views vs copies. The broadcasting concepts here set up the universal functions section. This is a long section - consider a 10-minute break halfway through.
 
 ### Questions
 - How do I access and modify specific elements or sections of arrays?
 - What's the difference between views and copies when slicing arrays?
 - How can I use boolean and fancy indexing for data filtering and selection?
+
+> **INSTRUCTOR NOTES**: These questions address the core confusion points. Many students struggle with the view/copy distinction and don't initially see the power of boolean indexing for data filtering.
 
 ### Objectives
 After completing this episode, learners will be able to:
@@ -602,6 +892,8 @@ After completing this episode, learners will be able to:
 - Apply boolean indexing for conditional data selection
 - Understand the difference between views and copies in array operations
 - Use fancy indexing for complex array manipulations
+
+> **INSTRUCTOR NOTES**: Start with a clear example array that everyone can follow. The reshape is introduced here without explanation - mention it briefly but don't dive deep, focus on the indexing concepts.
 
 **Hands‑On Code**  
 ```python
@@ -618,6 +910,9 @@ print(f"x[-1,-1] = {x[-1,-1]}")  # negative indices
 
 # Slicing
 print(f"\nSlicing:")
+
+> **INSTRUCTOR NOTES**: Point out that negative indices work just like Python lists. The comma syntax `x[row, col]` is NumPy-specific and much cleaner than `x[row][col]`. Make sure everyone understands this notation before moving on.
+
 print(f"First row: {x[0, :]}")
 print(f"Last column: {x[:, -1]}")
 print(f"First 2 rows, last 2 columns:\n{x[:2, -2:]}")
@@ -625,6 +920,9 @@ print(f"Every other row: \n{x[::2, :]}")
 print(f"Reverse rows:\n{x[::-1, :]}")
 
 # Integer array indexing (fancy indexing)
+
+> **INSTRUCTOR NOTES**: The slicing syntax is exactly like Python lists, but applied to each dimension. The `::2` step syntax and negative steps (`[::-1]`) are powerful but can confuse beginners. Spend time on the multi-dimensional slicing - this is where NumPy shines over nested lists.
+
 rows = np.array([0, 2])
 cols = np.array([1, 3])
 print(f"\nFancy indexing:")
@@ -635,6 +933,9 @@ print(f"Multiple row selection:\n{x[[0, 2], :]}")  # Select rows 0 and 2
 print(f"Multiple col selection:\n{x[:, [1, 3]]}")  # Select columns 1 and 3
 
 # Boolean indexing
+
+> **INSTRUCTOR NOTES**: Fancy indexing (using arrays of indices) is powerful but can be confusing. Emphasize that `x[[0,2], :]` selects rows 0 and 2, while `x[:, [1,3]]` selects columns 1 and 3. This is different from slicing - you're picking specific rows/columns, not ranges.
+
 mask = x % 2 == 0
 print(f"\nBoolean indexing:")
 print(f"Even mask:\n{mask}")
@@ -649,6 +950,9 @@ print(f"Values > 5 and < 10: {x[(x > 5) & (x < 10)]}")
 print(f"Values <= 3 or >= 9: {x[(x <= 3) | (x >= 9)]}")
 
 # Modifying arrays through indexing
+
+> **INSTRUCTOR NOTES**: Boolean indexing is one of NumPy's killer features for data analysis. Point out that `x % 2 == 0` creates a boolean array of the same shape, then `x[mask]` selects only the True elements. The `&` and `|` operators (not `and`/`or`) are essential for combining conditions. This is the foundation of data filtering in pandas.
+
 print(f"\nModifying arrays:")
 # Slice view and modify
 sub = x[1:3, 2:4]
@@ -746,15 +1050,21 @@ print(f"Anti-diagonal: {anti_diag}")  # [3, 6, 9, 12]
 - Fancy indexing with integer arrays allows for complex element selection
 - Always be aware of whether operations create views or copies for memory efficiency
 
+> **INSTRUCTOR NOTES**: This section covers a lot of ground! Make sure students understand the view/copy distinction - it's crucial for memory management and avoiding bugs. Boolean indexing is the gateway to data analysis workflows. Consider taking a 10-15 minute break here before Universal Functions.
+
 ---
 
 ## 4. Universal functions and aggregations (13:15–14:45)
+
+> **INSTRUCTOR NOTES**: This section demonstrates NumPy's real power for data analysis. Universal functions (ufuncs) are what make NumPy fast and convenient. The presidential heights data makes it practical and engaging. This is where students see how NumPy enables real data analysis workflows.
 
 ### Questions
 - What are universal functions (ufuncs) and how do they work?
 - What is broadcasting and how does it enable operations between arrays of different shapes?
 - How do vectorized operations compare to traditional loops in performance?
 - How can I apply functions element-wise across arrays efficiently?
+
+> **INSTRUCTOR NOTES**: Focus on the "vectorized" concept - operations that work on entire arrays without explicit loops. This is the paradigm shift that makes NumPy powerful. The aggregation functions connect directly to what data scientists need daily.
 
 ### Objectives
 After completing this episode, learners will be able to:
@@ -791,10 +1101,6 @@ y_sqrt = np.sqrt(x)
 y_sq = np.square(x)
 y_power = np.power(x, 3)
 
-# Using out parameter to avoid temporaries
-out = np.empty_like(x)
-np.multiply(x, 2, out=out)
-print(f"2x (using out parameter): {out}")
 
 # More ufuncs
 print(f"exp(x): {y_exp}")
@@ -1090,6 +1396,8 @@ print(f"Scale values in [-1,1) by 10: {result}")
 3. Use `np.where` to replace negative values with 0 and positive values with their square.
 4. Load the president heights data and answer: "What percentage of presidents are above average height?"
 
+> **INSTRUCTOR NOTES**: This exercise combines universal functions with real data analysis. Give them 10-12 minutes. The president heights question connects everything together - loading data, computing statistics, and answering a real question. This is what NumPy enables that pure Python makes difficult.
+
 ### Answer
 ```python
 # 1. Basic operations
@@ -1142,6 +1450,8 @@ print(f"Shortest president: {heights.min()} cm (#{np.argmin(heights) + 1})")
 - Vectorized operations are typically 10-100x faster than explicit Python loops
 - NumPy provides comprehensive mathematical, trigonometric, and logical functions
 - Use `np.where()` for conditional operations and element-wise logic
+
+> **INSTRUCTOR NOTES**: Universal functions are the heart of NumPy's performance advantage. Make sure students understand that "vectorized" doesn't mean using loops - it means the loops are implemented in C under the hood. This is the key insight that makes NumPy transformative for numerical computing.
 
 ---
 
@@ -1328,6 +1638,8 @@ print(f"Normalized column means: {normalized.mean(axis=0)}")
 ---
 
 ## 5. Advanced indexing and reshaping (15:00–16:00)
+
+> **INSTRUCTOR NOTES**: Students are getting tired by now - this is late afternoon content. Keep it practical and hands-on. Focus on reshape and transpose as the most immediately useful operations. Many students struggle with mental models of multidimensional arrays, so use visual analogies.
 
 ### Questions
 - How can I select specific data from arrays using conditions?
@@ -1562,6 +1874,8 @@ print(f"Stacked horizontally:\n{horizontal_stack}")
 
 ## 6. Performance tuning and mini‑project (16:00–16:50)
 
+> **INSTRUCTOR NOTES**: This is the culminating section where students apply everything they've learned. The performance comparison should be eye-opening. Give them time to experiment with the mini-project - this is where the concepts solidify. Many will want to work in pairs, which is fine.
+
 ### Questions
 - How can I optimize NumPy code for better performance?
 - What memory layout considerations affect array operations?
@@ -1604,10 +1918,14 @@ print("Apply your NumPy skills to analyze weather data!")
 
 ## 7. Wrap-up (16:50–17:00)
 
+> **INSTRUCTOR NOTES**: End on a high note! Students should feel accomplished and motivated to continue learning. The ecosystem overview shows them the broader picture - NumPy is the foundation for everything else they'll do in data science. Be encouraging about their progress and provide clear next steps.
+
 ### Summary
 - NumPy arrays: creation, indexing, views, and memory
 - Universal functions, aggregations, and performance
 - Advanced indexing, reshaping, and real-world applications
+
+> **INSTRUCTOR NOTES**: Quickly recap the journey - from "why NumPy" to practical data analysis. Emphasize that they now have the foundation for pandas, scikit-learn, matplotlib, and the entire scientific Python ecosystem. Ask for final questions and wish them well on their data science journey.
 
 ### Further Resources
 - [NumPy Documentation](https://numpy.org/doc/)
@@ -1619,5 +1937,7 @@ print("Apply your NumPy skills to analyze weather data!")
 - What did you find most useful?
 - Any remaining questions or topics?
 - Suggestions for future workshops?
+
+> **INSTRUCTOR NOTES**: Take time for genuine feedback and questions. Many students will have "aha" moments during this reflection time. Encourage them to share what clicked for them - it helps reinforce learning for everyone. End with enthusiasm about their NumPy journey!
 
 ---
