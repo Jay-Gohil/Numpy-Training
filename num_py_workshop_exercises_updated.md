@@ -52,8 +52,6 @@ Each section contains:
 
 ---
 
----
-
 ## Document Overview
 
 - **Introduction**: covers NumPy basics  
@@ -912,13 +910,6 @@ import numpy as np
 x = np.arange(12).reshape(3,4)  # reshape(3,4) turns 12 elements into 3×4 matrix
 print("Original array:")
 print(x)
-
-```python
-import numpy as np
-x = np.arange(12).reshape(3,4)  # reshape(3,4) turns 12 elements into 3×4 matrix
-print("Original array:")
-print(x)
-```
 
 # Basic indexing
 print(f"\nBasic indexing:")
