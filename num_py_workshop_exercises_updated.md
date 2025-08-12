@@ -954,7 +954,131 @@ print(f"Values <= 3 or >= 9: {x[(x <= 3) | (x >= 9)]}")
 > **INSTRUCTOR NOTES**: Boolean indexing is one of NumPy's killer features for data analysis. Point out that `x % 2 == 0` creates a boolean array of the same shape, then `x[mask]` selects only the True elements. The `&` and `|` operators (not `and`/`or`) are essential for combining conditions. This is the foundation of data filtering in pandas.
 
 print(f"\nModifying arrays:")
+```
+
+### Views vs Copies: Rules of Thumb and Examples
+
+Understanding when NumPy creates views (shares memory) vs copies (new memory) is crucial for both performance and avoiding bugs. Here are the essential rules with examples:
+
+> **INSTRUCTOR NOTES**: This is where many students get confused and make bugs later. Take time with this section! The view/copy distinction is fundamental to NumPy programming. Use the gradebook example to make it practical - everyone understands student grades. Have students run np.shares_memory() themselves to see the difference.
+
+```python
+# Reset to clean array for demonstrations
+x = np.arange(24).reshape(4, 6)
+```
+
+#### Rule 1: Basic Slicing → Views (Shares Memory)
+```python
+slice_view = x[1:3, 2:5]      # Rectangular slice
+row_view = x[2, :]            # Entire row  
+col_view = x[:, 3]            # Entire column
+step_view = x[::2, ::2]       # Stepped slice
+
+# All are views - they share memory with original
+print(f"slice_view shares memory: {np.shares_memory(x, slice_view)}")  # True
+
+# Modifying view affects original
+slice_view[:] = -999
+print("Original array was modified!")
+```
+
+#### Rule 2: Fancy Indexing → Copies (Independent Memory)
+```python
+fancy_copy = x[[0, 2], :]              # Non-contiguous rows
+fancy_copy2 = x[:, [1, 3, 5]]          # Non-contiguous columns
+fancy_copy3 = x[[0, 2], [1, 3]]        # Specific elements
+
+# All are copies - independent memory
+print(f"fancy_copy shares memory: {np.shares_memory(x, fancy_copy)}")  # False
+
+# Modifying copy doesn't affect original
+fancy_copy[:] = -777
+print("Original array unchanged!")
+```
+
+#### Rule 3: Boolean Indexing → Copies (Always Safe)  
+```python
+mask = x > 10
+bool_copy = x[mask]
+
+# Boolean indexing always creates copies
+print(f"bool_copy shares memory: {np.shares_memory(x, bool_copy)}")  # False
+```
+
+#### Rule 4: Force Copies When Needed
+```python
+# When you need a safe copy from slicing
+safe_copy = x[1:3, :].copy()  # Explicitly make copy
+safe_copy[:] = -111           # Won't affect original
+```
+
+**Quick Reference:**
+- **Views:** Basic slicing `arr[start:stop]`, single elements `arr[i,j]`
+- **Copies:** Fancy indexing `arr[[0,2]]`, boolean indexing `arr[mask]`, explicit `.copy()`
+- **Check:** Use `np.shares_memory(original, result)` to verify
+
+print(f"\n" + "="*60)
+print("RULE 5: Practical patterns and gotchas")
+print("="*60)
+
+# Common gotcha: Modifying a slice unintentionally
+data = np.arange(20).reshape(4, 5)
+print(f"Original data:\n{data}")
+
+# This modifies the original!
+subset = data[1:3, :]  # This is a view
+subset += 1000         # This modifies the original data!
+print(f"After modifying subset, original data:\n{data}")
+print("⚠️  Gotcha! Adding to the view modified the original!")
+
+# Reset and show safe approach
+data = np.arange(20).reshape(4, 5)
+subset_safe = data[1:3, :].copy()  # Safe copy
+subset_safe += 1000                 # Only modifies the copy
+print(f"After modifying subset_safe copy, original data:\n{data}")
+print("✅ Safe! Used .copy() to protect original.")
+
+print(f"\n" + "="*60)
+print("MEMORY AND PERFORMANCE IMPLICATIONS")
+print("="*60)
+
+# Memory comparison
+large_array = np.random.rand(1000, 1000)
+slice_view = large_array[::10, ::10]    # View - no new memory
+slice_copy = large_array[::10, ::10].copy()  # Copy - new memory
+
+print(f"Original array: {large_array.nbytes / 1024**2:.1f} MB")
+print(f"Slice view: {slice_view.nbytes / 1024**2:.1f} MB (shares memory)")
+print(f"Slice copy: {slice_copy.nbytes / 1024**2:.1f} MB (independent memory)")
+print(f"Memory overhead for copy: {slice_copy.nbytes / 1024**2:.1f} MB")
+
+print(f"\n" + "="*60)
+print("QUICK REFERENCE: View vs Copy Rules")
+print("="*60)
+print("""
+VIEWS (shares memory - fast, but changes affect original):
+✓ Basic slicing: arr[start:stop:step, start:stop:step]
+✓ Single element access: arr[i, j] 
+✓ Full dimensions: arr[:, :], arr[i, :], arr[:, j]
+✓ Regular steps: arr[::2, ::3]
+
+COPIES (independent memory - safe, but uses more memory):
+✓ Fancy indexing: arr[[0,2,4], :], arr[:, [1,3,5]]
+✓ Boolean indexing: arr[arr > 5], arr[mask]
+✓ Explicit copy: arr.copy(), arr[:].copy()
+✓ Some operations: arr.reshape(-1) (sometimes)
+
+WHEN TO USE WHICH:
+→ Use views when: You want to modify original data, memory is limited
+→ Use copies when: You want independence, safety from side effects
+
+QUICK CHECK: Use np.shares_memory(original, result) to verify!
+""")
+
+# Modifying arrays through indexing
+print(f"\nModifying arrays:")
 # Slice view and modify
+x = np.arange(12).reshape(3,4)
 sub = x[1:3, 2:4]
 print(f"Subarray (view):\n{sub}")
 sub[:] = 100
@@ -974,6 +1098,77 @@ view[:] = 999
 print("After modifying copy and view:")
 print(f"Original x:\n{x}")
 print(f"Copy (independent):\n{cp}")
+
+### Advanced Indexing Patterns
+
+> **INSTRUCTOR NOTES**: The gradebook example makes indexing practical and relatable. Students can see immediate applications to real data analysis. Point out how these patterns apply to any tabular data - sales, measurements, survey responses. The "gotchas" section prevents common bugs that plague beginners.
+
+#### Practical Example: Student Gradebook
+```python
+# Sample data: 5 students × 4 subjects
+grades = np.array([
+    [85, 92, 78, 88],  # Student 0: Math, Science, English, History
+    [90, 85, 82, 91],  # Student 1
+    [78, 88, 85, 79],  # Student 2  
+    [92, 91, 89, 93],  # Student 3
+    [76, 82, 80, 84]   # Student 4
+])
+subjects = ['Math', 'Science', 'English', 'History']
+```
+
+#### Pattern 1: Multi-Condition Selection
+```python
+# Students with ALL grades ≥ 80
+good_students = np.all(grades >= 80, axis=1)
+good_grades = grades[good_students, :]
+
+# Students who scored >90 in Math OR >87 overall average
+math_stars = grades[:, 0] > 90
+high_achievers = np.mean(grades, axis=1) > 87
+special = math_stars | high_achievers
+special_students = grades[special, :]
+```
+
+#### Pattern 2: Conditional Replacement
+```python
+# Add 5 bonus points to grades < 80
+grades_bonus = grades.copy()
+grades_bonus[grades_bonus < 80] += 5
+
+# Cap maximum at 95
+grades_bonus[grades_bonus > 95] = 95
+```
+
+#### Pattern 3: Finding Positions
+```python
+# Find highest grade position
+max_pos = np.unravel_index(np.argmax(grades), grades.shape)
+print(f"Highest grade at student {max_pos[0]}, subject {max_pos[1]}")
+
+# Find all positions with specific grade
+positions_91 = np.where(grades == 91)
+```
+
+#### Common Gotchas and Safe Patterns
+```python
+# ❌ WRONG: Accidentally modifying original
+subset = grades[:2, :]  # This is a view!
+subset += 10           # Modifies original grades!
+
+# ✅ RIGHT: Safe modification
+subset_safe = grades[:2, :].copy()  # Explicit copy
+subset_safe += 10                   # Only modifies copy
+
+# ✅ RIGHT: Direct assignment
+grades_modified = grades.copy()
+grades_modified[:2, :] += 10       # Clear intent
+```
+
+**Best Practices:**
+- **Views:** Use for read-only operations, memory-limited situations
+- **Copies:** Use when modifying subsets, need independence
+- **Conditions:** Use `&`, `|` (not `and`, `or`), add parentheses: `(a > 5) & (b < 10)`
+- **Debugging:** Check with `np.shares_memory()` when unsure
 
 # Advanced indexing patterns
 x = np.arange(24).reshape(4, 6)
