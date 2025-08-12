@@ -893,14 +893,32 @@ After completing this episode, learners will be able to:
 - Understand the difference between views and copies in array operations
 - Use fancy indexing for complex array manipulations
 
-> **INSTRUCTOR NOTES**: Start with a clear example array that everyone can follow. The reshape is introduced here without explanation - mention it briefly but don't dive deep, focus on the indexing concepts.
+> **INSTRUCTOR NOTES**: Start with a clear example array that everyone can follow. The reshape is introduced here - mention it briefly but don't dive deep, focus on the indexing concepts.
+
 
 **Hands‑On Code**  
 ```python
+
+# Quick reshape demo
+print("\n=== Reshape: Changes dimensions, keeps data ===")
+data = np.arange(6)              # [0, 1, 2, 3, 4, 5]
+matrix = data.reshape(2, 3)      # [[0, 1, 2], [3, 4, 5]]
+auto = data.reshape(-1, 2)       # Auto-calculate: (3, 2)
+print(f"1D: {data}")
+print(f"2×3:\n{matrix}")
+print(f"Auto (-1,2):\n{auto}")
+
 import numpy as np
-x = np.arange(12).reshape(3,4)
+x = np.arange(12).reshape(3,4)  # reshape(3,4) turns 12 elements into 3×4 matrix
 print("Original array:")
 print(x)
+
+```python
+import numpy as np
+x = np.arange(12).reshape(3,4)  # reshape(3,4) turns 12 elements into 3×4 matrix
+print("Original array:")
+print(x)
+```
 
 # Basic indexing
 print(f"\nBasic indexing:")
@@ -1914,7 +1932,13 @@ print(f"\nStore A-Jan, Store B-Mar, Store C-Apr: {specific_data}")
 
 ### Part C: Reshaping - Changing Array Dimensions
 
+**Reshape changes array dimensions while keeping the same data.** Use it to reorganize data for different analysis perspectives.
+
 ```python
+# Quick example: reshape() changes dimensions, not data
+data = np.arange(6)        # [0, 1, 2, 3, 4, 5]
+matrix = data.reshape(2, 3) # [[0, 1, 2], [3, 4, 5]]
+
 print("\n=== Reshaping for Different Analysis ===")
 
 # Example: Daily temperature data for a week
